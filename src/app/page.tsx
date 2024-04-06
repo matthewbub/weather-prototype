@@ -1,23 +1,32 @@
 import Image from "next/image";
 import { currentUser } from '@clerk/nextjs';
+import { Hero } from '@/components/hero';
+import { TopNavWithAuth } from '@/components/topNav';
+import { Cobe } from "@/components/globe";
 
 export default async function Home() {
 	const user = await currentUser();
- 
-  if (!user) {
+
+	if (!user) {
 		return (
 			<div>Not signed in</div>
 		)
 	};
- 	
-  return (
-		<div className="flex items-center space-x-2">
-			<img
-				src={user.imageUrl}
-				alt="Profile Picture"
-				className="rounded-full h-16 w-16"
-			/>
-			<h1 className="text-white text-sm">{user.emailAddresses[0].emailAddress}</h1>	
+
+	return (
+		<div className="pageMargin w-full">
+			<TopNavWithAuth />
+			<div className="mt-40">
+				<div className="relative">
+					<div className="absolute -top-20 w-full flex justify-center">
+						<Cobe />
+					</div>
+					<div className="primaryBg relative z-10 py-4 top-[200px] pb-20">
+						<Hero />
+					</div>
+				</div>
+			</div>
 		</div>
 	);
 }
+

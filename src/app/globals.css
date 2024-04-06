@@ -16,7 +16,7 @@
   }
 }
 
-body {
+body, .primaryBg {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -26,8 +26,16 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+@layer components {
+  .primaryBtn {
+		@apply rounded-md bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400;
+	}
+
+	.secondaryBtn {
+		@apply px-4 py-2.5 text-sm font-semibold leading-6 text-white;
+	}
+
+	.pageMargin {
+		@apply px-4 md:px-8 lg:px-16 xl:px-24;
+	}
 }
