@@ -11,6 +11,9 @@ https://www.weather.gov/documentation/services-web-api
 - [ ] Click outside hook for Modals
 - [x] Reduce geolocation data sent over in address lookup
 - [x] Use joi on edge routes
+- [x] No duplicate entires in Supabase for locations
+- [x] No duplicate entires in Supabase for users assigned locations
+
 
 ## QA NOTES
 - When working with Lisa, point out the button selection "jump" caused by a border toggle issue as a type of bug to look for
