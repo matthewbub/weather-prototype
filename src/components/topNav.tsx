@@ -26,7 +26,9 @@ export const TopNavWithAuth = () => {
 				</SignedIn>
 				<SignedOut>
 					<li>
-						<SignInButton />
+						<SignInButton>
+							<a href="/sign-in" className="secondaryBtn">Sign in</a>
+						</SignInButton>
 					</li>
 				</SignedOut>
 			</ul>

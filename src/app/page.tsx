@@ -5,14 +5,6 @@ import { TopNavWithAuth } from '@/components/topNav';
 import { Cobe } from "@/components/globe";
 
 export default async function Home() {
-	const user = await currentUser();
-
-	if (!user) {
-		return (
-			<div>Not signed in</div>
-		)
-	};
-
 	return (
 		<div className="pageMargin w-full">
 			<TopNavWithAuth />
