@@ -32,10 +32,18 @@ body, .primaryBg {
 	}
 
 	.secondaryBtn {
-		@apply px-4 py-2.5 text-sm font-semibold leading-6 text-white;
+		@apply px-4 py-2.5 text-sm font-semibold leading-6 text-white hover:bg-white/10;
 	}
 
 	.pageMargin {
 		@apply px-4 md:px-8 lg:px-16 xl:px-24;
+	}
+
+	.input {
+		@apply w-full px-4 py-2.5 text-sm text-gray-200 bg-gray-800 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent;
+	}
+
+	.label {
+		@apply block text-sm font-semibold text-gray-100;
 	}
 }
