@@ -11,4 +11,7 @@ export const store = create<StoreTypes>((set) => ({
 	setLoading: (loading: boolean) => set({ loading }),
 	modalIsOpen: false,
 	setModalIsOpen: (modalIsOpen: boolean) => set({ modalIsOpen }),
+	selectedLocation: null,
+	setSelectedLocation: (selectedLocation: SearchResultsTypes) => set({ selectedLocation }),
+	setSelectedLocationToNull: () => set({ selectedLocation: null })
 }));

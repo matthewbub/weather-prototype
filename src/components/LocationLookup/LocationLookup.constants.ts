@@ -1,7 +1,14 @@
 import { AddressInputFields } from './LocationLookup.types';
 
 export const locationLookupApiUrls = {
-	autoComplete: '/api/location-auto-complete'
+	autoComplete: {
+		url: '/api/location-auto-complete', 
+		method: 'POST'
+	},
+	addLocation: {
+		url: '/api/location',
+		method: 'POST'
+	}
 }
 
 export const addressFieldMessages: AddressInputFields = {
@@ -32,6 +39,7 @@ export const locationLookupMessages = {
 		lookupLocationTitle: 'Add New Location',
 		lookupLocationDescription: 'Search and select a new location to add to your feed.',
 		locationLookupSearchResults: 'Search Results',
+		locationLookupSearchButtonDefault: 'Select a location above',
 		locationLookupSearchButton: 'Add Location'
 	}
 }

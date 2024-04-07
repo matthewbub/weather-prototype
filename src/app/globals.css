@@ -33,6 +33,11 @@ body, .primaryBg {
 
 	.secondaryBtn {
 		@apply px-4 py-2.5 text-sm font-semibold leading-6 text-white hover:bg-white/10;
+
+	}
+	
+	.secondaryBtn.active {
+		@apply bg-white/10;
 	}
 
 	.pageMargin {

@@ -20,8 +20,11 @@ export interface SearchResultsTypes {
 export interface StoreTypes {
 	searchResults: SearchResultsTypes[];
 	loading: boolean;
+	modalIsOpen: boolean;
+	selectedLocation: SearchResultsTypes | null;
 	setSearchResults: (searchResults: SearchResultsTypes[]) => void;
 	setLoading: (loading: boolean) => void;
-	modalIsOpen: boolean;
 	setModalIsOpen: (modalIsOpen: boolean) => void;
+	setSelectedLocation: (selectedLocation: SearchResultsTypes) => void;
+	setSelectedLocationToNull: () => void;
 }

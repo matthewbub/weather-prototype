@@ -3,18 +3,22 @@ import React from 'react';
 import { addressFieldMessages, locationLookupMessages, locationLookupApiUrls } from './LocationLookup.constants';
 import { type SearchResultsTypes } from './LocationLookup.types';
 import { store } from './LocationLookup.store';
+import clsx from 'clsx';
 
 export const LocationLookupForm = () => {
 	const searchResults = store((state) => state.searchResults);
 	const loading = store((state) => state.loading);
 	const setSearchResults = store((state) => state.setSearchResults);
 	const setLoading = store((state) => state.setLoading);
+	const setSelectedLocation = store((state) => state.setSelectedLocation);
+	const selectedLocation = store((state) => state.selectedLocation);
+	const setSelectedLocationToNull = store((state) => state.setSelectedLocationToNull);
 
 	const handleCityChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { value } = e.target;
 		setLoading(true);
 
-		const searchResultsData = await fetch(locationLookupApiUrls.autoComplete, {
+		const searchResultsData = await fetch(locationLookupApiUrls.autoComplete.url, {
 			method: 'POST',
 			body: JSON.stringify({
 				type: 'city',
@@ -34,8 +38,8 @@ export const LocationLookupForm = () => {
 		const { value } = e.target;
 		setLoading(true);
 
-		const searchResultsData = await fetch(locationLookupApiUrls.autoComplete, {
-			method: 'POST',
+		const searchResultsData = await fetch(locationLookupApiUrls.autoComplete.url, {
+			method: locationLookupApiUrls.autoComplete.method,
 			body: JSON.stringify({
 				type: 'postcode',
 				postcode: value
@@ -48,6 +52,36 @@ export const LocationLookupForm = () => {
 			setLoading(false);
 			setSearchResults(searchResults?.data);
 		}
+	}
+
+  const handleSelectLocation = (location: SearchResultsTypes) => {
+		setSelectedLocation(location);
+	}
+
+	const handleAddLocationToFeed = async () => {
+		// don't react if nothing is selected
+		if (!selectedLocation) {
+			return;
+		}
+
+		const { formatted, lon, lat } = selectedLocation; 
+
+		const addLocationData = await fetch(locationLookupApiUrls.addLocation.url, {
+			method: locationLookupApiUrls.addLocation.method,
+			body: JSON.stringify({ 
+				formatted: selectedLocation.formatted, 
+				lon: selectedLocation.lon, 
+				lat: selectedLocation.lat 
+			})
+		});
+
+		const addLocationResponse = await addLocationData.json();
+
+		if (!addLocationResponse?.error) {
+			// do something with the response probably a toast message
+		}
+
+		setSelectedLocationToNull();
 	}
 
 	return (
@@ -88,26 +122,31 @@ export const LocationLookupForm = () => {
 				<AddressResults
 					loading={loading}
 					searchResults={searchResults}
+					callback={handleSelectLocation}
 				/>
 
 			</div>
 
 			<button
-				// onClick={handleAddName} 
-				className='primaryBtn whitespace-nowrap'
-				disabled
+				onClick={handleAddLocationToFeed} 
+				className='primaryBtn whitespace-nowrap disabled:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-gray-700'
+				disabled={!selectedLocation ? true : undefined}
 			>
-				{locationLookupMessages.en.locationLookupSearchButton}
+				{!selectedLocation 
+					? locationLookupMessages.en.locationLookupSearchButtonDefault
+					: locationLookupMessages.en.locationLookupSearchButton}
 			</button>
 
 		</div>
 	);
 };
 
-export const AddressResults = ({ loading, searchResults }: {
+export const AddressResults = ({ loading, searchResults, callback }: {
 	loading: boolean;
-	searchResults: SearchResultsTypes[]
+	searchResults: SearchResultsTypes[];
+	callback: (result: SearchResultsTypes) => void;
 }) => {
+	const selectedLocation = store((state) => state.selectedLocation);
 	const hasResults = searchResults && searchResults.length > 0;
 	const isEmpty = !loading && searchResults && searchResults.length === 0;
 	
@@ -119,7 +158,9 @@ export const AddressResults = ({ loading, searchResults }: {
 		<div className='grid grid-cols-2 gap-4 mt-6'>
 			{searchResults.slice(0, 6).map((result: SearchResultsTypes, index: number) => (
 				<div key={index} className='flex flex-col space-y-2.5 col-span-2 md:col-span-1'>
-					<button className='secondaryBtn flex-col flex'>
+					<button className={clsx('secondaryBtn flex-col flex', {
+						'active border border-dashed border-indigo-600': selectedLocation?.formatted === result.formatted
+					})} onClick={() => callback(result)}>
 						{result?.formatted}
 					</button>
 				</div>
