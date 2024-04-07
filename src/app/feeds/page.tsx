@@ -4,7 +4,7 @@ import { Hero } from '@/components/hero';
 import { TopNavWithAuth } from '@/components/topNav';
 import { FeedList } from "@/components/feedList";
 import { Feed } from "@/components/feed";
-import { AddNewFeed } from "@/components/addNewFeed";
+import { LocationLookup } from "@/components/LocationLookup";
 
 export default async function Home() {
 	const user = await currentUser();
@@ -23,7 +23,7 @@ export default async function Home() {
 					<FeedList />
 				</div>
 				<div className="md:col-span-9 col-span-12">
-					<AddNewFeed />
+					<LocationLookup />
 					<Feed />
 				</div>
 			</div>
