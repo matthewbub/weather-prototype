@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import Joi from 'joi';
 import { supabase } from "@/utils/supabase";
-import { auth } from "@clerk/nextjs";
 import { useAppUserOnServer } from "@/utils/useAppUser";
 
 interface PostResponseTypes {
@@ -16,12 +15,19 @@ export async function GET(request: Request) {
 	});
 }
 
+// Ensure no nefarious data is being sent
+const schema = Joi.object({
+	lat: Joi.number().required(),
+	lon: Joi.number().required(),
+	formatted: Joi.string().required(),
+});
+
 export async function POST(request: Request) {
 	const requestData = await request.json()
-	const currentSession = auth();
 	const sanitizedUser = await useAppUserOnServer();
 
-	if (sanitizedUser.error || sanitizedUser.data === null || !sanitizedUser.data.user.id) {
+	const failedToAuthenticate = sanitizedUser.error || sanitizedUser.data === null || !sanitizedUser.data.user.id;
+	if (failedToAuthenticate) {
 		return NextResponse.json<PostResponseTypes>({
 			error: true,
 			message: sanitizedUser.message,
@@ -29,35 +35,26 @@ export async function POST(request: Request) {
 		});
 	}
 
-	// Ensure no nefarious data is being sent
-	const schema = Joi.object({
-		lat: Joi.number().required(),
-		lon: Joi.number().required(),
-		formatted: Joi.string().required(),
-	});
+	const { error: postValidationError } = schema.validate(requestData);
 
-	const { error } = schema.validate(requestData);
-
-	if (error) {
+	if (postValidationError) {
 		// manually verified this works :)
 		return NextResponse.json<PostResponseTypes>({
 			error: true,
-			message: error.details[0].message,
-			data: null,
-		});
-	}
-
-	if (!currentSession || !currentSession.sessionId) {
-		return NextResponse.json<PostResponseTypes>({
-			error: true,
-			message: "No session found.",
+			message: "Invalid data provided. Please try again.",
 			data: null,
 		});
 	}
 
 	const { lat, lon, formatted } = requestData;
-	let locationData = null;
-	// TODO: Validate that this location is not already in the database
+	let locationData: {
+		id: string;
+		created_at: string;
+		formatted: string;
+		lat: number;
+		lon: number;
+	} | null = null;
+
 	const { data: insertData, error: insertError } = await supabase
 		.from("geolocations")
 		.insert([{ lat, lon, formatted }])
@@ -105,7 +102,14 @@ export async function POST(request: Request) {
 		locationData = insertData;
 	}
 
-	// document this chain nof events in the readme
+	if (!locationData) {
+		return NextResponse.json<PostResponseTypes>({
+			error: true,
+			message: "Location not found, which is weird. Something went wrong.",
+			data: null,
+		});
+	}
+
 	const { data: insertUserData, error: insertUserError } = await supabase
 		.from("weatherapp_feed_locations_by_user")
 		.insert([{
