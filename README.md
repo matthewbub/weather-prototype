@@ -9,7 +9,7 @@ https://www.weather.gov/documentation/services-web-api
 - [x] Visuals for new location selection. ie disabled button, selected location
 - [x] Store every address searched to ultimately mitigate away from paying for addresses
 - [ ] Click outside hook for Modals
-- [ ] Reduce geolocation data sent over in address lookup
+- [x] Reduce geolocation data sent over in address lookup
 - [ ] Document API and behavior for LocationLookup
 - [x] Use joi on edge routes
 
