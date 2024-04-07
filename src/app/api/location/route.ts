@@ -10,7 +10,6 @@ interface PostResponseTypes {
 	data: any | null;
 }
 
-
 export async function GET(request: Request) {
 	return NextResponse.json({
 		error: false,
@@ -105,7 +104,7 @@ export async function POST(request: Request) {
 	} else {
 		locationData = insertData;
 	}
-	
+
 	// document this chain nof events in the readme
 	const { data: insertUserData, error: insertUserError } = await supabase
 		.from("weatherapp_feed_locations_by_user")
@@ -122,7 +121,7 @@ export async function POST(request: Request) {
 			message: insertUserError.message,
 			data: null,
 		});
-	} 
+	}
 
 	if (insertUserError && insertUserError.code === "23505") {
 		return NextResponse.json<PostResponseTypes>({
