@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import Joi from 'joi';
 import { supabase } from "@/utils/supabase";
 import { useAppUserOnServer } from "@/utils/useAppUser";
+import { fetchOpenWeatherApi } from "@/utils/openWeather";
+import { nwsWeatherAlertsByState } from "@/utils/nwsWeather"
 
 interface PostResponseTypes {
 	error: boolean;
@@ -29,6 +31,15 @@ export async function GET(request: Request) {
 			geolocations:location!inner(*)
 		`)
 		.eq('user', sanitizedUser.data?.user.id)
+		.limit(5)
+
+
+	// userSelectedGeoLocations[x].geolocations.lat
+	// userSelectedGeoLocations[x].geolocations.lon
+
+
+
+	// console.log()
 
 	if (userSelectedGeoLocationsError) {
 		return NextResponse.json<PostResponseTypes>({
@@ -37,7 +48,35 @@ export async function GET(request: Request) {
 			data: null,
 		});
 	}
-	
+
+	if (!userSelectedGeoLocations || userSelectedGeoLocations.length === 0) {
+    return NextResponse.json<PostResponseTypes>({
+			error: true,
+			message: "No locations found for this user.",
+			data: null,
+		});
+  }
+
+	const data = await nwsWeatherAlertsByState()
+
+	console.log(data);
+
+	// Array to hold weather data for all locations
+  const weatherDataForAllLocations = [];
+
+  for (const location of userSelectedGeoLocations) {
+    const { lat, lon } = location.geolocations;
+    try {
+      // const weatherData = await fetchOpenWeatherApi(lat, lon);
+      // weatherDataForAllLocations.push(weatherData);      
+    } catch (error) {
+      console.error(`Failed to fetch weather for location (${lat}, ${lon}):`, error);
+      
+    }
+  }
+
+	// console.log(weatherDataForAllLocations);
+
 	return NextResponse.json({
 		error: false,
 		data: userSelectedGeoLocations
@@ -143,7 +182,7 @@ export async function POST(request: Request) {
 		.from("weatherapp_feed_locations_by_user")
 		.insert([{
 			location: locationData.id,
-			user: sanitizedUser.data.user.id,
+			user: sanitizedUser.data?.user.id,
 		}])
 		.select()
 		.single();

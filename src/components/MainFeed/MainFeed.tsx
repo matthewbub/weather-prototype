@@ -21,9 +21,13 @@ export function MainFeed() {
 						formatted: string;
 					}
 				}) => (
-					<li className='border border-gray-800 rounded bg-gray-900 flex flex-col items-center py-10'>
-						<img className='h-[120px]' src={'https://azhrbvulmwgxcijoaenn.supabase.co/storage/v1/object/public/weatherapp/cloudy_foggy_night__color.png'} />
-						<p className='mt-4 inline-block'>{place.geolocations.formatted}</p>
+					<li className='border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
+						<div>
+							<p className='inline-block text-sm'>{place.geolocations.formatted}</p>
+						</div>
+						<div className='w-full mt-6'>
+							<img className='mx-auto h-[160px]' src={'https://azhrbvulmwgxcijoaenn.supabase.co/storage/v1/object/public/weatherapp/cloudy_foggy_night__color.png'} />
+						</div>
 					</li>
 				))}
 			</ul>
