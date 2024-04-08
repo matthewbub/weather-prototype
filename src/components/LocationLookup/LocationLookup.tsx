@@ -5,6 +5,7 @@ import { type SearchResultsTypes } from './LocationLookup.types';
 import { store } from './LocationLookup.store';
 import clsx from 'clsx';
 import { AddIcon } from '@/components/icons';
+import {globalStore} from '@/store';
 
 export const LocationLookupForm = () => {
 	const searchResults = store((state) => state.searchResults);
@@ -14,7 +15,8 @@ export const LocationLookupForm = () => {
 	const setSelectedLocation = store((state) => state.setSelectedLocation);
 	const selectedLocation = store((state) => state.selectedLocation);
 	const setSelectedLocationToNull = store((state) => state.setSelectedLocationToNull);
-
+	const setLocations = globalStore((state) => state.setLocations);
+	
 	const handleCityChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { value } = e.target;
 		setLoading(true);
@@ -65,8 +67,6 @@ export const LocationLookupForm = () => {
 			return;
 		}
 
-		const { formatted, lon, lat } = selectedLocation; 
-
 		const addLocationData = await fetch(locationLookupApiUrls.addLocation.url, {
 			method: locationLookupApiUrls.addLocation.method,
 			body: JSON.stringify({ 
@@ -79,10 +79,26 @@ export const LocationLookupForm = () => {
 		const addLocationResponse = await addLocationData.json();
 
 		if (!addLocationResponse?.error) {
-			// do something with the response probably a toast message
+			// TODO do something with the response probably a toast message
 		}
 
 		setSelectedLocationToNull();
+
+		// This was cp from `src/components/FeedsLifecycleWrapper.tsx`
+		async function resetLocations () {
+			// clear previous data
+			setLocations([]);
+	
+			const locationData = await fetch('/api/location');
+			const parsedLocationData = await locationData.json();
+	
+			if (parsedLocationData.error) {
+				alert('something went wrong')
+			}
+	
+			setLocations(parsedLocationData?.data);
+		}
+		resetLocations();
 	}
 
 	return (
