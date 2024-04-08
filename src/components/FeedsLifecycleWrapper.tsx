@@ -5,24 +5,27 @@ import {globalStore} from '@/store';
 
 export const FeedsLifecycleWrapper = ({ children }: { children: React.ReactElement }) => {
 	const setLocations = globalStore((state) => state.setLocations);
+	async function setLocationsIntoGlobalState () {
+		// clear previous data
+		setLocations([]);
 
-	useEffect(() => {
-		async function setLocationsIntoGlobalState () {
-			const locationData = await fetch('/api/location');
-			const parsedLocationData = await locationData.json();
+		const locationData = await fetch('/api/location');
+		const parsedLocationData = await locationData.json();
 
-			if (parsedLocationData.error) {
-				alert('something went wrong')
-			}
-
-			// This sets the users specified locations into a global state
-			// to later be accessed throughout the app
-			// All rerenders occur here
-			setLocations(parsedLocationData?.data);
+		if (parsedLocationData.error) {
+			alert('something went wrong')
 		}
 
+		// This sets the users specified locations into a global state
+		// to later be accessed throughout the app
+		setLocations(parsedLocationData?.data);
+	}
+
+	const initialRender = () => {
 		setLocationsIntoGlobalState();
-	}, []);
+	}
+
+	useEffect(initialRender, []);
 
 	return (
 		<>
