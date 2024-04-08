@@ -1,11 +1,12 @@
 'use client';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { addressFieldMessages, locationLookupMessages, locationLookupApiUrls } from './LocationLookup.constants';
 import { type SearchResultsTypes } from './LocationLookup.types';
 import { store } from './LocationLookup.store';
 import clsx from 'clsx';
 import { AddIcon } from '@/components/icons';
 import {globalStore} from '@/store';
+import { debounce } from '@/utils/debounce';
 
 export const LocationLookupForm = () => {
 	const searchResults = store((state) => state.searchResults);
@@ -17,45 +18,46 @@ export const LocationLookupForm = () => {
 	const setSelectedLocationToNull = store((state) => state.setSelectedLocationToNull);
 	const setLocations = globalStore((state) => state.setLocations);
 	
-	const handleCityChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { value } = e.target;
-		setLoading(true);
+	const debouncedHandleCityChange = useCallback(debounce(async (e) => {
+    const { value } = e.target;
+    setLoading(true);
 
-		const searchResultsData = await fetch(locationLookupApiUrls.autoComplete.url, {
-			method: 'POST',
-			body: JSON.stringify({
-				type: 'city',
-				cityName: value
-			})
-		});
+    const searchResultsData = await fetch(locationLookupApiUrls.autoComplete.url, {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'city',
+        cityName: value
+      })
+    });
 
-		const searchResults = await searchResultsData.json();
+    const searchResults = await searchResultsData.json();
 
-		if (!searchResults?.error) {
-			setLoading(false);
-			setSearchResults(searchResults?.data)
-		}
-	}
+    if (!searchResults?.error) {
+      setLoading(false);
+      setSearchResults(searchResults?.data);
+    }
+  }, 500), []);
 
-	const handleZipChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { value } = e.target;
-		setLoading(true);
+	const debouncedHandleZipChange = useCallback(debounce(async (e) => {
+    const { value } = e.target;
+    setLoading(true);
 
-		const searchResultsData = await fetch(locationLookupApiUrls.autoComplete.url, {
-			method: locationLookupApiUrls.autoComplete.method,
-			body: JSON.stringify({
-				type: 'postcode',
-				postcode: value
-			})
-		});
+    const searchResultsData = await fetch(locationLookupApiUrls.autoComplete.url, {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'postcode',
+        cityName: value
+      })
+    });
 
-		const searchResults = await searchResultsData.json();
+    const searchResults = await searchResultsData.json();
 
-		if (!searchResults?.error) {
-			setLoading(false);
-			setSearchResults(searchResults?.data);
-		}
-	}
+    if (!searchResults?.error) {
+      setLoading(false);
+      setSearchResults(searchResults?.data);
+    }
+  }, 500), []);
+
 
   const handleSelectLocation = (location: SearchResultsTypes) => {
 		setSelectedLocation(location);
@@ -113,7 +115,7 @@ export const LocationLookupForm = () => {
 						name={addressFieldMessages.cityName.name}
 						placeholder={addressFieldMessages.cityName.placeholder}
 						className='input'
-						onChange={handleCityChange}
+						onChange={debouncedHandleCityChange}
 					/>
 				</div>
 				<div className='col-span-12 md:col-span-1 h-full flex flex-col justify-center items-center md:pt-4'>
@@ -128,7 +130,7 @@ export const LocationLookupForm = () => {
 						name={addressFieldMessages.zipCode.name}
 						placeholder={addressFieldMessages.zipCode.placeholder}
 						className='input'
-						onChange={handleZipChange}
+						onChange={debouncedHandleZipChange}
 					/>
 				</div>
 			</div>
@@ -176,7 +178,7 @@ export const AddressResults = ({ loading, searchResults, callback }: {
 			{searchResults.slice(0, 6).map((result: SearchResultsTypes, index: number) => (
 				<div key={index} className='flex flex-col space-y-2.5 col-span-2 md:col-span-1'>
 					<button className={clsx('secondaryBtn flex-col flex', {
-						'active border border-dashed border-indigo-600': selectedLocation?.formatted === result.formatted
+						'active border border-dashed border-blue-600': selectedLocation?.formatted === result.formatted
 					})} onClick={() => callback(result)}>
 						{result?.formatted}
 					</button>
@@ -236,7 +238,7 @@ export const LocationLookup = () => {
 			</button>
 
 			{modalIsOpen && (
-				<div className='primaryBg px-4 py-10 border border-indigo-700 space-y-6'>
+				<div className='primaryBg px-4 py-10 border border-blue-700 space-y-6'>
 					<div>
 						<h3 className='text-lg font-bold'>{locationLookupMessages.en.lookupLocationTitle}</h3>
 						<p className='text-sm'>{locationLookupMessages.en.lookupLocationDescription}</p>

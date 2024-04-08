@@ -43,14 +43,15 @@ There are a few challenges that led to the solution we're seeing here. First, I 
 - [x] No duplicate entires in Supabase for locations
 - [x] No duplicate entires in Supabase for users assigned locations
 - [x] When a new location is added to a users feed we need to re-trigger the fetch to db in the globalStore. 
-- [ ] Throttle address search form 
+- [x] Throttle address search form 
 - [ ] get weather per feed item
 - [ ] implement that on scroll loading behavior and limit results to like 5 or 10 at a time idk it depends on the openweather api rate limits
 - [ ] implement state-wide alerts: `https://api.weather.gov/alerts/active?area=CA`
 	- DOCS: https://www.weather.gov/documentation/services-web-api
 - [ ] toasts should be added as responses to all actions, uh where is that specifically, research and identify
 - [ ] user should be able to delete a location item
-
+- [ ] UI is busted in desktop when added a new location
+- [ ] Do not send http requests to `location-auto-complete` on empty inputs
 
 
 ### backlog TODO
