@@ -1,4 +1,7 @@
 # Docs
+
+**Data** displayed is coming from those edge functions, whereas **UI** intensive functionality comes from React. Having this clearly separated reduces the need for unnecessary lifecycle events. Basically avoid useEffect at all costs; in fact - every instance of useEffect in this app should come with a lint error / forced explanation of why we couldn't have used an alternative. 
+
 ## Add locations
 
 The data goes through 2 tables, in the first table we attempt to insert the location into our globalized table if it does not exist. Then, we use the second table to insert the id of the user who preformed that action. We use this secondary table as a source of truth per user; whereas the first table is the generalized source of truth for all.
@@ -50,8 +53,9 @@ There are a few challenges that led to the solution we're seeing here. First, I 
 
 
 
-### Jobs TODO
+### backlog TODO
 - [ ] i didn't know gps coordinates change over time. We'll need a background job to run X times a year to ensure coordinates remain aligned
+- [ ] create a biome.js lint rule that forces an explanation for the use of useEffect
 
 #### QA NOTES
 - When working with Lisa, point out the button selection "jump" caused by a border toggle issue as a type of bug to look for
