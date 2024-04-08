@@ -4,6 +4,7 @@ import { addressFieldMessages, locationLookupMessages, locationLookupApiUrls } f
 import { type SearchResultsTypes } from './LocationLookup.types';
 import { store } from './LocationLookup.store';
 import clsx from 'clsx';
+import { AddIcon } from '@/components/icons';
 
 export const LocationLookupForm = () => {
 	const searchResults = store((state) => state.searchResults);
@@ -208,10 +209,14 @@ export const LocationLookup = () => {
 
 	return (
 		<div>
-			<button onClick={toggleModal} className='secondaryBtn'>
+			<button onClick={toggleModal} className='secondaryBtn flex gap-x-3 items-center'>
 				{!modalIsOpen 
 					?	locationLookupMessages.en.lookupLocationAddButton 
 					: locationLookupMessages.en.collapseLookupLocationAddButton}
+				{!modalIsOpen
+					? <AddIcon className='h-5 w-5'/>
+					: <></>
+				}
 			</button>
 
 			{modalIsOpen && (

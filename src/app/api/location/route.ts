@@ -10,8 +10,37 @@ interface PostResponseTypes {
 }
 
 export async function GET(request: Request) {
+	// Get all locations the current user watches
+	const sanitizedUser = await useAppUserOnServer();
+
+	const failedToAuthenticate = sanitizedUser.error || !sanitizedUser.data?.user.id;
+	if (failedToAuthenticate) {
+		return NextResponse.json<PostResponseTypes>({
+			error: true,
+			message: sanitizedUser.message,
+			data: null,
+		});
+	}
+
+	const { data: userSelectedGeoLocations, error: userSelectedGeoLocationsError } = await supabase
+		.from('weatherapp_feed_locations_by_user')
+		.select(`
+			id,
+			geolocations:location!inner(*)
+		`)
+		.eq('user', sanitizedUser.data?.user.id)
+
+	if (userSelectedGeoLocationsError) {
+		return NextResponse.json<PostResponseTypes>({
+			error: true,
+			message: userSelectedGeoLocationsError.message,
+			data: null,
+		});
+	}
+	
 	return NextResponse.json({
 		error: false,
+		data: userSelectedGeoLocations
 	});
 }
 
@@ -26,7 +55,7 @@ export async function POST(request: Request) {
 	const requestData = await request.json()
 	const sanitizedUser = await useAppUserOnServer();
 
-	const failedToAuthenticate = sanitizedUser.error || sanitizedUser.data === null || !sanitizedUser.data.user.id;
+	const failedToAuthenticate = sanitizedUser.error || !sanitizedUser.data?.user.id;
 	if (failedToAuthenticate) {
 		return NextResponse.json<PostResponseTypes>({
 			error: true,
