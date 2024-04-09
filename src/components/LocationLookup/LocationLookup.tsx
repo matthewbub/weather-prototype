@@ -106,7 +106,7 @@ export const LocationLookupForm = () => {
 	return (
 		<div className='flex flex-col space-y-6'>
 			<div className='grid grid-cols-12 gap-4'>
-				<div className='flex flex-col space-y-1.5 col-span-12 md:col-span-8'>
+				<div className='flex flex-col space-y-1.5 col-span-12 md:col-span-7'>
 					<label className='label' htmlFor={addressFieldMessages.cityName.name}>
 						<span>{addressFieldMessages.cityName.label}</span>
 					</label>
@@ -121,7 +121,7 @@ export const LocationLookupForm = () => {
 				<div className='col-span-12 md:col-span-1 h-full flex flex-col justify-center items-center md:pt-4'>
 					<span className='whitespace-nowrap'>{'or by'}</span>
 				</div>
-				<div className='flex flex-col space-y-1.5 col-span-12 md:col-span-3'>
+				<div className='flex flex-col space-y-1.5 col-span-12 md:col-span-4'>
 					<label className='label' htmlFor={addressFieldMessages.zipCode.name}>
 						<span>{addressFieldMessages.zipCode.label}</span>
 					</label>
@@ -226,19 +226,21 @@ export const LocationLookup = () => {
 	};
 
 	return (
-		<div>
-			<button onClick={toggleModal} className='secondaryBtn flex gap-x-3 items-center'>
-				{!modalIsOpen 
-					?	locationLookupMessages.en.lookupLocationAddButton 
-					: locationLookupMessages.en.collapseLookupLocationAddButton}
-				{!modalIsOpen
-					? <AddIcon className='h-5 w-5'/>
-					: <></>
-				}
-			</button>
+		<div className='w-full'>
+			<div className='w-full flex justify-end'>
+				<button onClick={toggleModal} className='secondaryBtn flex gap-x-3 items-center'>
+					{!modalIsOpen 
+						?	locationLookupMessages.en.lookupLocationAddButton 
+						: locationLookupMessages.en.collapseLookupLocationAddButton}
+					{!modalIsOpen
+						? <AddIcon className='h-5 w-5'/>
+						: <></>
+					}
+				</button>
+			</div>
 
 			{modalIsOpen && (
-				<div className='primaryBg px-4 py-10 border border-blue-700 space-y-6'>
+				<div className='primaryBg px-4 py-10 bg-gray-900 space-y-6'>
 					<div>
 						<h3 className='text-lg font-bold'>{locationLookupMessages.en.lookupLocationTitle}</h3>
 						<p className='text-sm'>{locationLookupMessages.en.lookupLocationDescription}</p>

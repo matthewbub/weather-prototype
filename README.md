@@ -2,6 +2,8 @@
 
 **Data** displayed is coming from those edge functions, whereas **UI** intensive functionality comes from React. Having this clearly separated reduces the need for unnecessary lifecycle events. Basically avoid useEffect at all costs; in fact - every instance of useEffect in this app should come with a lint error / forced explanation of why we couldn't have used an alternative. 
 
+**Why are your file names and variable names so long?** Have you ever tried fuzzy finding `id` among a sea of `id` references? There's a convention to it all, with the intention of avoiding ambiguous naming conventions.
+
 ## Add locations
 
 The data goes through 2 tables, in the first table we attempt to insert the location into our globalized table if it does not exist. Then, we use the second table to insert the id of the user who preformed that action. We use this secondary table as a source of truth per user; whereas the first table is the generalized source of truth for all.
@@ -36,6 +38,7 @@ Checkout `src/app/api/example/` for a basic example of the Next.js Edge function
 It's also cool to know the primary abstractions we're utilizing here. This forces consistency across API responses.
 
 - `okResponse(data: any, msg?: string): NextResponse` - Use for happy cases
+- `bypassOkResponse(data: any, msg?: string): PostResponseTypes` - Use for working with successful requests but not sending to client
 - `failResponse(msg: string): NextResponse` - Use for sending failures to the client
 - `skirtFailedResponse(msg: string): PostResponseTypes` - Use for working with failures but not sending to client.
 
@@ -63,7 +66,7 @@ It's also cool to know the primary abstractions we're utilizing here. This force
 - [ ] user should be able to delete a location item
 - [ ] UI is busted in desktop when added a new location
 - [ ] Do not send http requests to `location-auto-complete` on empty inputs
-
+- [ ] Create a CRON job that executes `nwsWeatherAlertsByState` across all 50 states every hour or something. Log those to our database, we'll pull from them in an effort to not stress the Governments networks
 
 ### backlog TODO
 - [ ] i didn't know gps coordinates change over time. We'll need a background job to run X times a year to ensure coordinates remain aligned

@@ -21,7 +21,7 @@ export function MainFeed() {
 						formatted: string;
 					}
 				}) => (
-					<li className='border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
+					<li key={place.id} className='border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
 						<div>
 							<p className='inline-block text-sm'>{place.geolocations.formatted}</p>
 						</div>

@@ -4,38 +4,15 @@ import { supabase } from "@/utils/supabase";
 import { useAppUserOnServer } from "@/utils/useAppUser";
 import { fetchOpenWeatherApi } from "@/utils/openWeather";
 import { nwsWeatherAlertsByState } from "@/utils/nwsWeather"
-
+import { okResponse, failResponse, skirtFailedResponse } from "@/utils/response";
+import { queryOpenWeatherApiForUsersLocations, querySupabaseForUserSelectedLocations } from '@/lib/api/location/location.requests';
 interface PostResponseTypes {
 	error: boolean;
 	message: string;
 	data: any | null;
 }
 
-function okResponse(data: any, msg?: string): NextResponse {
-	return NextResponse.json<PostResponseTypes>({
-		error: true,
-		message: msg || "success",
-		data: data,
-	});
-}
-
-function failResponse(msg: string): NextResponse {
-	return NextResponse.json<PostResponseTypes>({
-		error: true,
-		message: msg,
-		data: null,
-	});
-}
-
-function skirtFailedResponse(msg: string): PostResponseTypes {
-	return {
-		error: true,
-		message: msg,
-		data: null,
-	}
-}
-
-export async function GET(request: Request) {
+export async function GET() {
 	// Get all locations the current user watches
 	const sanitizedUser = await useAppUserOnServer();
 
@@ -44,68 +21,30 @@ export async function GET(request: Request) {
 		return failResponse(sanitizedUser.message)
 	}
 
-	const querySupabaseForUserSelectedLocations = async (id: string) => {
-		const { data: userSelected, error: userSelectedGeoLocationsError } = await supabase
-			.from('weatherapp_feed_locations_by_user')
-			.select(`
-				id,
-				geolocations:location!inner(*)
-			`)
-			.eq('user', id)
-			.limit(5)
-
-			if (userSelectedGeoLocationsError) {
-				return skirtFailedResponse(userSelectedGeoLocationsError.message)
-			}
-		
-			if (!userSelected || userSelected.length === 0) {
-				return skirtFailedResponse("No locations found for this user.");
-			}
-
-			return {
-				error: false,
-				message: "Data retrieved",
-				data: userSelected
-			}
-	}
-
-	const getUserSelectedGeoLocations = await querySupabaseForUserSelectedLocations(sanitizedUser.data?.user.id as string);
-
+	const getUserSelectedGeoLocations = await querySupabaseForUserSelectedLocations(
+		sanitizedUser.data?.user.id as string
+	);
 	if (getUserSelectedGeoLocations.error) {
 		return failResponse(getUserSelectedGeoLocations.message)
 	}
 
 	const userSelectedGeoLocations = getUserSelectedGeoLocations?.data;
+	// Im just leaving this because it's easier to look at for some reason
 	// userSelectedGeoLocations[x].geolocations.lat
 	// userSelectedGeoLocations[x].geolocations.lon
 
-
-
-	// console.log()
-
-	
-
-	const data = await nwsWeatherAlertsByState()
-
-	console.log(data);
-
 	// Array to hold weather data for all locations
-  const weatherDataForAllLocations = [];
+	const weatherDataForAllLocations = await queryOpenWeatherApiForUsersLocations(
+		getUserSelectedGeoLocations?.data
+	)
+	if (weatherDataForAllLocations?.error) {
+		return failResponse(weatherDataForAllLocations.message);
+	}
 
-  for (const location of userSelectedGeoLocations) {
-    const { lat, lon } = location.geolocations;
-    try {
-      // const weatherData = await fetchOpenWeatherApi(lat, lon);
-      // weatherDataForAllLocations.push(weatherData);      
-    } catch (error) {
-      console.error(`Failed to fetch weather for location (${lat}, ${lon}):`, error);
-      
-    }
-  }
-
-	// console.log(weatherDataForAllLocations);
-
-	return okResponse(userSelectedGeoLocations);
+	return okResponse({
+		locations: userSelectedGeoLocations,
+		weather: weatherDataForAllLocations
+	});
 }
 
 // Ensure no nefarious data is being sent

@@ -16,9 +16,10 @@ export const FeedsLifecycleWrapper = ({ children }: { children: React.ReactEleme
 			alert('something went wrong')
 		}
 
+		console.log(parsedLocationData?.data);
 		// This sets the users specified locations into a global state
 		// to later be accessed throughout the app
-		setLocations(parsedLocationData?.data);
+		setLocations(parsedLocationData?.data?.locations);
 	}
 
 	const initialRender = () => {
