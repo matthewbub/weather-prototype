@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { addressFieldMessages, locationLookupMessages, locationLookupApiUrls } from './LocationLookup.constants';
 import { type SearchResultsTypes } from './LocationLookup.types';
 import { store } from './LocationLookup.store';
@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import { AddIcon } from '@/components/icons';
 import {globalStore} from '@/store';
 import { debounce } from '@/utils/debounce';
+import { useClickOutside } from '@/lib/hooks';
 
 export const LocationLookupForm = () => {
 	const searchResults = store((state) => state.searchResults);
@@ -37,27 +38,6 @@ export const LocationLookupForm = () => {
       setSearchResults(searchResults?.data);
     }
   }, 500), []);
-
-	const debouncedHandleZipChange = useCallback(debounce(async (e) => {
-    const { value } = e.target;
-    setLoading(true);
-
-    const searchResultsData = await fetch(locationLookupApiUrls.autoComplete.url, {
-      method: 'POST',
-      body: JSON.stringify({
-        type: 'postcode',
-        cityName: value
-      })
-    });
-
-    const searchResults = await searchResultsData.json();
-
-    if (!searchResults?.error) {
-      setLoading(false);
-      setSearchResults(searchResults?.data);
-    }
-  }, 500), []);
-
 
   const handleSelectLocation = (location: SearchResultsTypes) => {
 		setSelectedLocation(location);
@@ -105,36 +85,20 @@ export const LocationLookupForm = () => {
 
 	return (
 		<div className='flex flex-col space-y-6'>
-			<div className='grid grid-cols-12 gap-4'>
-				<div className='flex flex-col space-y-1.5 col-span-12 md:col-span-7'>
-					<label className='label' htmlFor={addressFieldMessages.cityName.name}>
-						<span>{addressFieldMessages.cityName.label}</span>
-					</label>
-					<input
-						type={addressFieldMessages.cityName.type}
-						name={addressFieldMessages.cityName.name}
-						placeholder={addressFieldMessages.cityName.placeholder}
-						className='input'
-						onChange={debouncedHandleCityChange}
-					/>
-				</div>
-				<div className='col-span-12 md:col-span-1 h-full flex flex-col justify-center items-center md:pt-4'>
-					<span className='whitespace-nowrap'>{'or by'}</span>
-				</div>
-				<div className='flex flex-col space-y-1.5 col-span-12 md:col-span-4'>
-					<label className='label' htmlFor={addressFieldMessages.zipCode.name}>
-						<span>{addressFieldMessages.zipCode.label}</span>
-					</label>
-					<input
-						type={addressFieldMessages.zipCode.type}
-						name={addressFieldMessages.zipCode.name}
-						placeholder={addressFieldMessages.zipCode.placeholder}
-						className='input'
-						onChange={debouncedHandleZipChange}
-					/>
-				</div>
+			
+			<div className='flex flex-col space-y-1.5 col-span-12 md:col-span-7'>
+				<label className='label' htmlFor={addressFieldMessages.cityName.name}>
+					<span>{addressFieldMessages.cityName.label}</span>
+				</label>
+				<input
+					type={addressFieldMessages.cityName.type}
+					name={addressFieldMessages.cityName.name}
+					placeholder={addressFieldMessages.cityName.placeholder}
+					className='input'
+					onChange={debouncedHandleCityChange}
+				/>
 			</div>
-
+				
 			<div>
 				<h2 className='text-lg font-bold'>{locationLookupMessages.en.locationLookupSearchResults}</h2>
 
@@ -220,15 +184,21 @@ export const AddressResults = ({ loading, searchResults, callback }: {
 export const LocationLookup = () => {
 	const modalIsOpen = store((state) => state.modalIsOpen);
 	const setModalIsOpen = store((state) => state.setModalIsOpen);
-
-	const toggleModal = () => {
-		setModalIsOpen(!modalIsOpen);
+	const addLocationModalRef = useRef(null)
+	
+	const handleOpenModal = () => {
+		setModalIsOpen(true);
 	};
+	const handleClickOutside = () => {
+		setModalIsOpen(false)
+	};
+	
+	useClickOutside(addLocationModalRef, handleClickOutside);
 
 	return (
 		<div className='w-full'>
 			<div className='w-full flex justify-end'>
-				<button onClick={toggleModal} className='secondaryBtn flex gap-x-3 items-center'>
+				<button onClick={handleOpenModal} className='secondaryBtn flex gap-x-3 items-center'>
 					{!modalIsOpen 
 						?	locationLookupMessages.en.lookupLocationAddButton 
 						: locationLookupMessages.en.collapseLookupLocationAddButton}
@@ -240,7 +210,10 @@ export const LocationLookup = () => {
 			</div>
 
 			{modalIsOpen && (
-				<div className='primaryBg px-4 py-10 bg-gray-900 space-y-6'>
+				<div 
+					ref={addLocationModalRef} 
+					className='rounded shadow-xl fixed z-10 top-0 left-0 right-0 bottom-0 m-auto h-fit sm:max-w-[500px] px-4 py-10 bg-gray-800 border border-gray-700 space-y-6'
+				>
 					<div>
 						<h3 className='text-lg font-bold'>{locationLookupMessages.en.lookupLocationTitle}</h3>
 						<p className='text-sm'>{locationLookupMessages.en.lookupLocationDescription}</p>

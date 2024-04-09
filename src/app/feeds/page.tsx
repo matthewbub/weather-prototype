@@ -18,15 +18,10 @@ export default async function Home() {
 		<FeedsLifecycleWrapper>
 			<div className="pageMargin">
 				<TopNavWithAuth />
-				<div className="w-full grid grid-cols-12">
-					<div className="md:col-span-3 col-span-12"></div>
-					<div className="md:col-span-6 col-span-12">
-						<div className='flex justify-end w-full'>
-							<LocationLookup />
-						</div>
-						<MainFeed />
-					</div>
+				<div className='flex justify-end w-full'>
+					<LocationLookup />
 				</div>
+				<MainFeed />
 			</div>
 		</FeedsLifecycleWrapper>
 	);

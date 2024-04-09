@@ -1,8 +1,13 @@
 # Docs
 
+## Conventions 
 **Data** displayed is coming from those edge functions, whereas **UI** intensive functionality comes from React. Having this clearly separated reduces the need for unnecessary lifecycle events. Basically avoid useEffect at all costs; in fact - every instance of useEffect in this app should come with a lint error / forced explanation of why we couldn't have used an alternative. 
 
 **Why are your file names and variable names so long?** Have you ever tried fuzzy finding `id` among a sea of `id` references? There's a convention to it all, with the intention of avoiding ambiguous naming conventions.
+
+React
+- Event handlers should being with the prefix `handle` and remain camel cased.
+- Hooks always begin with the prefix `use` and remain camel cased.
 
 ## Add locations
 
@@ -67,6 +72,8 @@ It's also cool to know the primary abstractions we're utilizing here. This force
 - [ ] UI is busted in desktop when added a new location
 - [ ] Do not send http requests to `location-auto-complete` on empty inputs
 - [ ] Create a CRON job that executes `nwsWeatherAlertsByState` across all 50 states every hour or something. Log those to our database, we'll pull from them in an effort to not stress the Governments networks
+- [ ] We need to pull `locations` and `weather` in two separate requests to paint the page. It's extremely slow in development, should be easy to lift.
+- [ ] Jest for ensuring there aren't any unintentional breakin changes backs
 
 ### backlog TODO
 - [ ] i didn't know gps coordinates change over time. We'll need a background job to run X times a year to ensure coordinates remain aligned
@@ -81,3 +88,10 @@ It's also cool to know the primary abstractions we're utilizing here. This force
 	- NOTES: It's actually different zips, not a bug.
 - [ ] Enter a city or zip, allow the search to populate. Manually clear the input fields. Actual: Screen is stuck in a loading state. Expected: Screen goes back to default messaging.
 
+
+
+---
+
+Dev Log
+
+- 04.09.24 - Deciding to pivot away from the Zip code search functionality. The UI will look cleaner without it; it is not working atm and requires maintenance. The fact that Zip codes don't always equate to cities conflicts with the whole concept of the app - A city-based experience; not a zone-based experience. This has been an idea that has been in consideration since its inception. I really need to pull the plug on it. Removing Zipcodes from the search bar will result in the ability to collect city names, in addition to the coordinates and formatted name (i.e. San Bernardino, CA, United States of America). Whereas when usin Zipcodes, we werent always recieving city names in the external api responses. We need those city names to accurately search for them in our system as GPS Coordinates are too imprecise for any sort of reliable unique identification. 
