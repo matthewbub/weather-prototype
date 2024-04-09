@@ -28,6 +28,17 @@ There are a few challenges that led to the solution we're seeing here. First, I 
 - `/api/location` - POST | GET
 - `/api/location-auto-complete` - POST 
 
+
+### API Routes Dev Notes
+
+Checkout `src/app/api/example/` for a basic example of the Next.js Edge function syntax. 
+
+It's also cool to know the primary abstractions we're utilizing here. This forces consistency across API responses.
+
+- `okResponse(data: any, msg?: string): NextResponse` - Use for happy cases
+- `failResponse(msg: string): NextResponse` - Use for sending failures to the client
+- `skirtFailedResponse(msg: string): PostResponseTypes` - Use for working with failures but not sending to client.
+
 ---
 
 ### General TODO 

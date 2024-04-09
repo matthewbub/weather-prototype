@@ -1,5 +1,5 @@
 export const nwsWeatherAlertsByState = async (state: string) => {
-	const url = 'https://api.weather.gov/alerts/active?area=CA'
+	const url = 'https://api.weather.gov/alerts/active?area=' + state
 	
 	const weatherData = await fetch(url, {
 		headers: {

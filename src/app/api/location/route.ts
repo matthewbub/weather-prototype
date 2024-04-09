@@ -11,29 +11,71 @@ interface PostResponseTypes {
 	data: any | null;
 }
 
+function okResponse(data: any, msg?: string): NextResponse {
+	return NextResponse.json<PostResponseTypes>({
+		error: true,
+		message: msg || "success",
+		data: data,
+	});
+}
+
+function failResponse(msg: string): NextResponse {
+	return NextResponse.json<PostResponseTypes>({
+		error: true,
+		message: msg,
+		data: null,
+	});
+}
+
+function skirtFailedResponse(msg: string): PostResponseTypes {
+	return {
+		error: true,
+		message: msg,
+		data: null,
+	}
+}
+
 export async function GET(request: Request) {
 	// Get all locations the current user watches
 	const sanitizedUser = await useAppUserOnServer();
 
 	const failedToAuthenticate = sanitizedUser.error || !sanitizedUser.data?.user.id;
 	if (failedToAuthenticate) {
-		return NextResponse.json<PostResponseTypes>({
-			error: true,
-			message: sanitizedUser.message,
-			data: null,
-		});
+		return failResponse(sanitizedUser.message)
 	}
 
-	const { data: userSelectedGeoLocations, error: userSelectedGeoLocationsError } = await supabase
-		.from('weatherapp_feed_locations_by_user')
-		.select(`
-			id,
-			geolocations:location!inner(*)
-		`)
-		.eq('user', sanitizedUser.data?.user.id)
-		.limit(5)
+	const querySupabaseForUserSelectedLocations = async (id: string) => {
+		const { data: userSelected, error: userSelectedGeoLocationsError } = await supabase
+			.from('weatherapp_feed_locations_by_user')
+			.select(`
+				id,
+				geolocations:location!inner(*)
+			`)
+			.eq('user', id)
+			.limit(5)
 
+			if (userSelectedGeoLocationsError) {
+				return skirtFailedResponse(userSelectedGeoLocationsError.message)
+			}
+		
+			if (!userSelected || userSelected.length === 0) {
+				return skirtFailedResponse("No locations found for this user.");
+			}
 
+			return {
+				error: false,
+				message: "Data retrieved",
+				data: userSelected
+			}
+	}
+
+	const getUserSelectedGeoLocations = await querySupabaseForUserSelectedLocations(sanitizedUser.data?.user.id as string);
+
+	if (getUserSelectedGeoLocations.error) {
+		return failResponse(getUserSelectedGeoLocations.message)
+	}
+
+	const userSelectedGeoLocations = getUserSelectedGeoLocations?.data;
 	// userSelectedGeoLocations[x].geolocations.lat
 	// userSelectedGeoLocations[x].geolocations.lon
 
@@ -41,21 +83,7 @@ export async function GET(request: Request) {
 
 	// console.log()
 
-	if (userSelectedGeoLocationsError) {
-		return NextResponse.json<PostResponseTypes>({
-			error: true,
-			message: userSelectedGeoLocationsError.message,
-			data: null,
-		});
-	}
-
-	if (!userSelectedGeoLocations || userSelectedGeoLocations.length === 0) {
-    return NextResponse.json<PostResponseTypes>({
-			error: true,
-			message: "No locations found for this user.",
-			data: null,
-		});
-  }
+	
 
 	const data = await nwsWeatherAlertsByState()
 
@@ -77,10 +105,7 @@ export async function GET(request: Request) {
 
 	// console.log(weatherDataForAllLocations);
 
-	return NextResponse.json({
-		error: false,
-		data: userSelectedGeoLocations
-	});
+	return okResponse(userSelectedGeoLocations);
 }
 
 // Ensure no nefarious data is being sent
