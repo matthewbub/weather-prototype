@@ -31,6 +31,7 @@ export function MainFeed() {
 						</li>
 					</>
 				)}
+
 				{locations && locations.map((place: {
 					id: string;
 					geolocations: {
@@ -49,6 +50,11 @@ export function MainFeed() {
 						</div>
 					</li>
 				))}
+				{locations && locations.length !== 0 && (
+					<li className='col-span-4 border border-dashed border-gray-800 rounded bg-gray-900 flex flex-col p-4 justify-center items-center'>
+						<p className='inline-block text-sm mx-auto'>Load More Results</p>
+					</li>
+				)}
 			</ul>
 
 		</div>

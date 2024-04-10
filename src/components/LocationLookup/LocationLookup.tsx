@@ -216,11 +216,12 @@ export const AddressResults = ({ loading, searchResults, callback }: {
 export const LocationLookup = () => {
 	const modalIsOpen = store((state) => state.modalIsOpen);
 	const setModalIsOpen = store((state) => state.setModalIsOpen);
-	const addLocationModalRef = useRef(null);
 	const setSearchResults = store((state) => state.setSearchResults);
 	const setSelectedLocationToNull = store((state) => state.setSelectedLocationToNull);
 	const setLocations = globalStore((state) => state.setLocations);
 	const setLocationInputValue = store((state) => state.setLocationInputValue);
+	
+	const addLocationModalRef = useRef(null);
 
 	const handleOpenModal = () => {
 		setModalIsOpen(true);
