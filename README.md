@@ -64,16 +64,19 @@ It's also cool to know the primary abstractions we're utilizing here. This force
 - [x] When a new location is added to a users feed we need to re-trigger the fetch to db in the globalStore. 
 - [x] Throttle address search form 
 - [ ] get weather per feed item
-- [ ] implement that on scroll loading behavior and limit results to like 5 or 10 at a time idk it depends on the openweather api rate limits
+- [x] limit results to like 5 at a time
 - [ ] implement state-wide alerts: `https://api.weather.gov/alerts/active?area=CA`
 	- DOCS: https://www.weather.gov/documentation/services-web-api
 - [ ] toasts should be added as responses to all actions, uh where is that specifically, research and identify
 - [ ] user should be able to delete a location item
 - [ ] UI is busted in desktop when added a new location
-- [ ] Do not send http requests to `location-auto-complete` on empty inputs
+- [x] Do not send http requests to `location-auto-complete` on empty inputs
+- [x] Do not send http requests to `location-auto-complete` on when an input is selected
 - [ ] Create a CRON job that executes `nwsWeatherAlertsByState` across all 50 states every hour or something. Log those to our database, we'll pull from them in an effort to not stress the Governments networks
 - [ ] We need to pull `locations` and `weather` in two separate requests to paint the page. It's extremely slow in development, should be easy to lift.
-- [ ] Jest for ensuring there aren't any unintentional breakin changes backs
+- [ ] Jest for ensuring there aren't any unintentional breaking changes backs
+- [ ] add load more / pagination features
+- [ ] Clear search results when the modal is closed
 
 ### backlog TODO
 - [ ] i didn't know gps coordinates change over time. We'll need a background job to run X times a year to ensure coordinates remain aligned

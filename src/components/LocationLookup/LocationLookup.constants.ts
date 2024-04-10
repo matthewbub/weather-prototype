@@ -35,7 +35,6 @@ export const locationLookupMessages = {
 		noResults: 'No results found. We\'ll display what we find here.',
 		initial: 'Select a location to add to your feed.',
 		lookupLocationAddButton: 'Add New Location',
-		collapseLookupLocationAddButton: 'Collapse',
 		lookupLocationTitle: 'Add New Location',
 		lookupLocationDescription: 'Search and select a new location to add to your feed.',
 		locationLookupSearchResults: 'Search Results',

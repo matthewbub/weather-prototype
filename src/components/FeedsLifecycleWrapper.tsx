@@ -13,7 +13,7 @@ export const FeedsLifecycleWrapper = ({ children }: { children: React.ReactEleme
 		const parsedLocationData = await locationData.json();
 
 		if (parsedLocationData.error) {
-			alert('something went wrong')
+			alert('something went wrong' + parsedLocationData.message)
 		}
 
 		console.log(parsedLocationData?.data);

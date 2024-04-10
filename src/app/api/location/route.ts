@@ -52,6 +52,9 @@ const schema = Joi.object({
 	lat: Joi.number().required(),
 	lon: Joi.number().required(),
 	formatted: Joi.string().required(),
+	city: Joi.string(),
+	state: Joi.string(),
+	county: Joi.string(),
 });
 
 export async function POST(request: Request) {
@@ -78,18 +81,31 @@ export async function POST(request: Request) {
 		});
 	}
 
-	const { lat, lon, formatted } = requestData;
+	const { lat, lon, formatted, city, state, county } = requestData;
 	let locationData: {
 		id: string;
 		created_at: string;
 		formatted: string;
 		lat: number;
 		lon: number;
+		city: string;
+		state: string;
+		county: string;
 	} | null = null;
+	
+	console.log('requestData');
+	console.log(requestData);
 
 	const { data: insertData, error: insertError } = await supabase
 		.from("geolocations")
-		.insert([{ lat, lon, formatted }])
+		.insert([{ 
+			lat, 
+			lon, 
+			formatted, 
+			city, 
+			state, 
+			county 
+		}])
 		.select()
 		.single();
 

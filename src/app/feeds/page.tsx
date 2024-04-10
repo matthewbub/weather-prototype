@@ -18,9 +18,7 @@ export default async function Home() {
 		<FeedsLifecycleWrapper>
 			<div className="pageMargin">
 				<TopNavWithAuth />
-				<div className='flex justify-end w-full'>
-					<LocationLookup />
-				</div>
+				<LocationLookup />
 				<MainFeed />
 			</div>
 		</FeedsLifecycleWrapper>
