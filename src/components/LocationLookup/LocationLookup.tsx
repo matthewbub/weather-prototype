@@ -219,15 +219,20 @@ export const LocationLookup = () => {
 	const addLocationModalRef = useRef(null);
 	const setSearchResults = store((state) => state.setSearchResults);
 	const setSelectedLocationToNull = store((state) => state.setSelectedLocationToNull);
+	const setLocations = globalStore((state) => state.setLocations);
+	const setLocationInputValue = store((state) => state.setLocationInputValue);
 
 	const handleOpenModal = () => {
 		setModalIsOpen(true);
 	};
 
+	// Completely clear form states when clicked outside
 	const handleClickOutside = () => {
 		setModalIsOpen(false);
 		setSearchResults([]);
 		setSelectedLocationToNull();
+		setLocations([]);
+		setLocationInputValue('');
 	};
 
 	useClickOutside(addLocationModalRef, handleClickOutside);
