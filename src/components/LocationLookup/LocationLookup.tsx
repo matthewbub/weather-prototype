@@ -232,7 +232,6 @@ export const LocationLookup = () => {
 		setModalIsOpen(false);
 		setSearchResults([]);
 		setSelectedLocationToNull();
-		setLocations([]);
 		setLocationInputValue('');
 	};
 

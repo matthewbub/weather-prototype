@@ -43,7 +43,7 @@ export async function GET() {
 
 	return okResponse({
 		locations: userSelectedGeoLocations,
-		weather: weatherDataForAllLocations
+		weather: weatherDataForAllLocations?.data
 	});
 }
 
