@@ -31,7 +31,7 @@ const WeatherCard = ({
 		<div className='space-y-6'>
 			<div className='w-full'>
 				<img
-					className='h-[60px]'
+					className='h-[60px] w-[60px] object-cover'
 					src={`https://azhrbvulmwgxcijoaenn.supabase.co/storage/v1/object/public/weatherapp/${weatherImages[imgHref]}color.png`}
 					alt={weatherDescription}
 				/>
@@ -41,34 +41,71 @@ const WeatherCard = ({
 			</div>
 			<ul>
 				<li className="grid grid-cols-2">
-					<span className='font-bold text-gray-200'>Currently:</span>
-					<span className="text-gray-500">{getCurrentTimeInTimezone(timezone)}</span>
+					<span className='font-bold text-gray-200 text-sm'>Currently:</span>
+					<span className="text-gray-500 text-sm">{getCurrentTimeInTimezone(timezone)}</span>
 				</li>
 				<li className="grid grid-cols-2">
-					<span className='font-bold text-gray-200'>Timezone:</span>					
-					<span className="text-gray-500">{timezone}</span>
+					<span className='font-bold text-gray-200 text-sm'>Timezone:</span>
+					<span className="text-gray-500 text-sm">{timezone}</span>
 				</li>
 				<li className="grid grid-cols-2">
-					<span className='font-bold text-gray-200'>Sunrise:</span>
-					<span className="text-gray-500">{formatUnixTimestampToEasyRead(sunrise, timezone)}</span>
+					<span className='font-bold text-gray-200 text-sm'>Sunrise:</span>
+					<span className="text-gray-500 text-sm">{formatUnixTimestampToEasyRead(sunrise, timezone)}</span>
 				</li>
 				<li className="grid grid-cols-2">
-					<span className='font-bold text-gray-200'>Sunset:</span>
-					<span className="text-gray-500">{formatUnixTimestampToEasyRead(sunset, timezone)}</span>
+					<span className='font-bold text-gray-200 text-sm'>Sunset:</span>
+					<span className="text-gray-500 text-sm">{formatUnixTimestampToEasyRead(sunset, timezone)}</span>
 				</li>
 				<li className="grid grid-cols-2">
-					<span className='font-bold text-gray-200'>Temp:</span>
-					<span className="text-gray-500">{temp}{'°F'}</span>
+					<span className='font-bold text-gray-200 text-sm'>Temp:</span>
+					<span className="text-gray-500 text-sm">{temp}{'°F'}</span>
 				</li>
 				<li className="grid grid-cols-2">
-					<span className='font-bold text-gray-200'>Feels Like:</span>
-					<span className="text-gray-500">{feelsLike}{'°F'}</span>
+					<span className='font-bold text-gray-200 text-sm'>Feels Like:</span>
+					<span className="text-gray-500 text-sm">{feelsLike}{'°F'}</span>
 				</li>
 				<li className="grid grid-cols-2">
-					<span className='font-bold text-gray-200'>Weather:</span>
-					<span className="text-gray-500">{weatherTitle}</span>
+					<span className='font-bold text-gray-200 text-sm'>Weather:</span>
+					<span className="text-gray-500 text-sm">{weatherTitle}</span>
 				</li>
 			</ul>
+		</div>
+	)
+}
+
+const WeatherCard24Hr = ({
+	imgHref,
+	timezone,
+	temp,
+	weatherTitle,
+	weatherDescription,
+	timeWillBe,
+}: {
+	imgHref: string;
+	timezone: string;
+	temp: string;
+	weatherTitle: string;
+	weatherDescription: string;
+	timeWillBe: number;
+}) => {
+	return (
+		<div className='grid grid-cols-12 gap-4 py-4'>
+			<div className='w-full col-span-2'>
+				<img
+					className='h-[40px] w-[40px] object-cover'
+					src={`https://openweathermap.org/img/wn/${imgHref}.png`}
+					alt={weatherDescription}
+				/>
+			</div>
+			<div className='col-span-10 flex flex-col space-x-1.5 items-end'>
+				<span className="text-gray-200 font-bold text-lg">
+					{formatUnixTimestampToEasyRead(timeWillBe, timezone)}
+				</span>
+				<div className='flex space-x-1.5 mt-2'>
+					<span className="text-gray-500 text-sm">{Math.round(temp)}{'°F'}</span>
+					<span className="text-gray-500 text-sm">{weatherTitle}</span>
+				</div>
+			</div>
 		</div>
 	)
 }
@@ -88,22 +125,17 @@ export function MainFeed() {
 			<ul className='gap-6 w-full grid grid-cols-12'>
 				{!locations || locations.length === 0 && (
 					<>
-						<li className='col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
-							<div>
-								<span className='w-[150px] h-[20px] block bg-gray-800 animate-pulse'></span>
-							</div>
-							<div className='w-full mt-6'>
-								<img className='mx-auto h-[60px]' src={'https://azhrbvulmwgxcijoaenn.supabase.co/storage/v1/object/public/weatherapp/cloudy_foggy_night__color.png'} />
-							</div>
-						</li>
-						<li className='col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
-							<div>
-								<span className='w-[150px] h-[20px] block bg-gray-800 animate-pulse'></span>
-							</div>
-							<div className='w-full mt-6'>
-								<img className='mx-auto h-[60px]' src={'https://azhrbvulmwgxcijoaenn.supabase.co/storage/v1/object/public/weatherapp/cloudy_foggy_night__color.png'} />
-							</div>
-						</li>
+						{/* Yeah this could be cooler but also shut up my copilot was turned off */}
+						{[1, 2, 3, 4, 5].map((id) => (
+							<li key={id} className='col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
+								<div className='w-full mb-4 pl-4'>
+									<div className='rounded-2xl h-[60px] w-[60px] bg-gray-800 animate-pulse'></div>
+								</div>
+								<div>
+									<span className='rounded-2xl w-[150px] h-[20px] block bg-gray-800 animate-pulse'></span>
+								</div>
+							</li>
+						))}
 					</>
 				)}
 
@@ -116,11 +148,11 @@ export function MainFeed() {
 						formatted: string;
 					}
 				}) => {
-					const location = weather.find((item) => place.geolocations.formatted === item.formatted);
+					const location = weather.find((item: any) => place.geolocations.formatted === item.formatted);
 
 					return (
 						<li key={place.id} className='col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
-							<WeatherCard 
+							<WeatherCard
 								formatted={place.geolocations.formatted}
 								timezone={location.timezone}
 								sunrise={location.current.sunrise}
@@ -131,6 +163,71 @@ export function MainFeed() {
 								imgHref={location.current.weather[0].id}
 								weatherDescription={location.current.weather[0].description}
 							/>
+						</li>
+					)
+				})}
+				{locations && locations.length !== 0 && (
+					<li className='col-span-4 border border-dashed border-gray-800 rounded bg-gray-900 flex flex-col p-4 justify-center items-center'>
+						<p className='inline-block text-sm mx-auto'>Load More Results</p>
+					</li>
+				)}
+			</ul>
+
+			<div className='mt-16 mb-4'>
+				<h3 className='text-lg font-bold'>Over the next 24 hours</h3>
+			</div>
+			<ul className='gap-6 space-y-4 w-full grid grid-cols-12'>
+				{!locations || locations.length === 0 && (
+					<>
+						{/* Yeah this could be cooler but also shut up my copilot was turned off */}
+						{[1, 2, 3, 4, 5].map((id) => (
+							<li key={id} className='col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
+								<div className='w-full mb-4 pl-4'>
+									<div className='rounded-2xl h-[60px] w-[60px] bg-gray-800 animate-pulse'></div>
+								</div>
+								<div>
+									<span className='rounded-2xl w-[150px] h-[20px] block bg-gray-800 animate-pulse'></span>
+								</div>
+							</li>
+						))}
+					</>
+				)}
+
+				{locations && locations.map((place: {
+					id: string;
+					geolocations: {
+						id: string;
+						lat: number;
+						lon: number;
+						formatted: string;
+					}
+				}) => {
+					const location = weather.find((item: any) => place.geolocations.formatted === item.formatted)
+					const hours = location.hourly;
+
+					return (
+						<li key={place.id} className='col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4 my-4'>
+							<h3 className='text-sm font-bold text-gray-200'>{place.geolocations.formatted}</h3>
+							{hours && hours.slice(0, 24).map((conditionByHour: {
+								dt: number;
+								temp: string;
+								weather: {
+									main: string;
+									icon: string;
+									description: string;
+								}[]
+							}) => (
+								<>
+									<WeatherCard24Hr
+										timeWillBe={conditionByHour.dt}
+										timezone={location.timezone}
+										temp={conditionByHour.temp}
+										weatherTitle={conditionByHour.weather[0].main}
+										imgHref={conditionByHour.weather[0].icon}
+										weatherDescription={conditionByHour.weather[0].description}
+									/>
+								</>
+							))}
 						</li>
 					)
 				})}
