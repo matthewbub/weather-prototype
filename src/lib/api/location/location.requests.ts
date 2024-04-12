@@ -10,6 +10,7 @@ export const querySupabaseForUserSelectedLocations = async (id: string, lastReco
 			geolocations:location!inner(*)
 		`, { count: 'exact' })
 		.eq('user', id)
+		.order('created_at', { ascending: false })
 		.limit(5)
 
 		console.log(rest)

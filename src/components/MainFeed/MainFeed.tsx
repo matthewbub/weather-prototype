@@ -5,8 +5,11 @@ import { formatUnixTimestampToEasyRead, getCurrentTimeInTimezone } from '@/utils
 import { kelvinToFahrenheit } from '@/utils/weather';
 import { weatherImages } from '@/lib/constants/weather';
 import Image from 'next/image';
+import { StarIcon } from '@/components/icons';
 
 const WeatherCard = ({
+	city,
+	state,
 	imgHref,
 	formatted,
 	timezone,
@@ -17,34 +20,45 @@ const WeatherCard = ({
 	weatherTitle,
 	weatherDescription
 }: {
+	city: string;
+	state: string;
 	imgHref: string;
 	formatted: string;
 	timezone: string;
 	sunrise: number;
 	sunset: number;
-	temp: string;
-	feelsLike: string;
+	temp: number;
+	feelsLike: number;
 	weatherTitle: string;
 	weatherDescription: string;
 }) => {
 	return (
 		<div className='space-y-6'>
-			<div className='w-full'>
-				<img
-					className='h-[60px] w-[60px] object-cover'
-					src={`https://azhrbvulmwgxcijoaenn.supabase.co/storage/v1/object/public/weatherapp/${weatherImages[imgHref]}color.png`}
-					alt={weatherDescription}
-				/>
+			<div className='w-full flex justify-between'>
+				<div className='flex items-end'>
+					<img
+						className='h-[80px] w-[80px] object-cover'
+						src={`https://azhrbvulmwgxcijoaenn.supabase.co/storage/v1/object/public/weatherapp/${weatherImages[imgHref]}color.png`}
+						alt={weatherDescription}
+					/>		
+					<div className='flex flex-col pl-4'>
+						<span className='text-4xl font-bold text-gray-200'>{`${Math.round(temp)}°F`}</span>
+						<p className='inline-block text-sm text-gray-500'>{`${city}, ${state}`}</p>
+					</div>
+				</div>
+				<div className='flex align-top'>
+					<StarIcon className='h-8 w-8 hover:stroke-yellow-500 hover:fill-yellow-500'/>
+				</div>
 			</div>
-			<div>
-				<p className='inline-block text-sm font-bold text-gray-200'>{formatted}</p>
-			</div>
+			{/* <div>
+				<p className='inline-block text-sm font-bold text-gray-200'>{`${city}, ${state}`}</p>
+			</div> */}
 			<ul>
 				<li className="grid grid-cols-2">
 					<span className='font-bold text-gray-200 text-sm'>Currently:</span>
 					<span className="text-gray-500 text-sm">{getCurrentTimeInTimezone(timezone)}</span>
 				</li>
-				<li className="grid grid-cols-2">
+				{/* <li className="grid grid-cols-2">
 					<span className='font-bold text-gray-200 text-sm'>Timezone:</span>
 					<span className="text-gray-500 text-sm">{timezone}</span>
 				</li>
@@ -58,16 +72,16 @@ const WeatherCard = ({
 				</li>
 				<li className="grid grid-cols-2">
 					<span className='font-bold text-gray-200 text-sm'>Temp:</span>
-					<span className="text-gray-500 text-sm">{temp}{'°F'}</span>
-				</li>
-				<li className="grid grid-cols-2">
+					<span className="text-gray-500 text-sm">{Math.round(temp)}{'°F'}</span>
+				</li> */}
+				{/* <li className="grid grid-cols-2">
 					<span className='font-bold text-gray-200 text-sm'>Feels Like:</span>
-					<span className="text-gray-500 text-sm">{feelsLike}{'°F'}</span>
-				</li>
-				<li className="grid grid-cols-2">
+					<span className="text-gray-500 text-sm">{Math.round(feelsLike)}{'°F'}</span>
+				</li> */}
+				{/* <li className="grid grid-cols-2">
 					<span className='font-bold text-gray-200 text-sm'>Weather:</span>
 					<span className="text-gray-500 text-sm">{weatherTitle}</span>
-				</li>
+				</li> */}
 			</ul>
 		</div>
 	)
@@ -88,6 +102,7 @@ const WeatherCard24Hr = ({
 	weatherDescription: string;
 	timeWillBe: number;
 }) => {
+	
 	return (
 		<div className='grid grid-cols-12 gap-4 py-4'>
 			<div className='w-full col-span-2'>
@@ -127,7 +142,7 @@ export function MainFeed() {
 					<>
 						{/* Yeah this could be cooler but also shut up my copilot was turned off */}
 						{[1, 2, 3, 4, 5].map((id) => (
-							<li key={id} className='col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
+							<li key={id} className='col-span-12 md:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
 								<div className='w-full mb-4 pl-4'>
 									<div className='rounded-2xl h-[60px] w-[60px] bg-gray-800 animate-pulse'></div>
 								</div>
@@ -146,14 +161,18 @@ export function MainFeed() {
 						lat: number;
 						lon: number;
 						formatted: string;
+						city: string;
+						state: string;
 					}
 				}) => {
 					const location = weather.find((item: any) => place.geolocations.formatted === item.formatted);
 
 					return (
-						<li key={place.id} className='col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
+						<li key={place.id} className='col-span-12 md:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
 							<WeatherCard
 								formatted={place.geolocations.formatted}
+								city={place.geolocations.city}
+								state={place.geolocations.state}
 								timezone={location.timezone}
 								sunrise={location.current.sunrise}
 								sunset={location.current.sunset}
@@ -167,7 +186,7 @@ export function MainFeed() {
 					)
 				})}
 				{locations && locations.length !== 0 && (
-					<li className='col-span-4 border border-dashed border-gray-800 rounded bg-gray-900 flex flex-col p-4 justify-center items-center'>
+					<li className='col-span-12 md:col-span-4 border border-dashed border-gray-800 rounded bg-gray-900 flex flex-col p-4 justify-center items-center'>
 						<p className='inline-block text-sm mx-auto'>Load More Results</p>
 					</li>
 				)}
@@ -181,7 +200,7 @@ export function MainFeed() {
 					<>
 						{/* Yeah this could be cooler but also shut up my copilot was turned off */}
 						{[1, 2, 3, 4, 5].map((id) => (
-							<li key={id} className='col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
+							<li key={id} className='col-span-12 md:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
 								<div className='w-full mb-4 pl-4'>
 									<div className='rounded-2xl h-[60px] w-[60px] bg-gray-800 animate-pulse'></div>
 								</div>
@@ -206,7 +225,7 @@ export function MainFeed() {
 					const hours = location.hourly;
 
 					return (
-						<li key={place.id} className='col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4 my-4'>
+						<li key={place.id} className='col-span-12 md:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4 my-4'>
 							<h3 className='text-sm font-bold text-gray-200'>{place.geolocations.formatted}</h3>
 							{hours && hours.slice(0, 24).map((conditionByHour: {
 								dt: number;
@@ -232,7 +251,7 @@ export function MainFeed() {
 					)
 				})}
 				{locations && locations.length !== 0 && (
-					<li className='col-span-4 border border-dashed border-gray-800 rounded bg-gray-900 flex flex-col p-4 justify-center items-center'>
+					<li className='col-span-12 md:col-span-4 border border-dashed border-gray-800 rounded bg-gray-900 flex flex-col p-4 justify-center items-center'>
 						<p className='inline-block text-sm mx-auto'>Load More Results</p>
 					</li>
 				)}
