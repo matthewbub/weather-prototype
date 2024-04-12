@@ -35,54 +35,23 @@ const WeatherCard = ({
 	return (
 		<div className='space-y-6'>
 			<div className='w-full flex justify-between'>
-				<div className='flex items-end'>
+				<div className='flex items-center'>
 					<img
 						className='h-[80px] w-[80px] object-cover'
 						src={`https://azhrbvulmwgxcijoaenn.supabase.co/storage/v1/object/public/weatherapp/${weatherImages[imgHref]}color.png`}
 						alt={weatherDescription}
-					/>		
-					<div className='flex flex-col pl-4'>
-						<span className='text-4xl font-bold text-gray-200'>{`${Math.round(temp)}°F`}</span>
+					/>
+					<div className='flex flex-col pl-8'>
+						<span className='text-4xl font-bold text-gray-200 mb-4'>{`${Math.round(temp)}°F`}</span>
 						<p className='inline-block text-sm text-gray-500'>{`${city}, ${state}`}</p>
+						<span className="text-gray-500 text-sm">{getCurrentTimeInTimezone(timezone)}</span>
 					</div>
 				</div>
 				<div className='flex align-top'>
-					<StarIcon className='h-8 w-8 hover:stroke-yellow-500 hover:fill-yellow-500'/>
+					<StarIcon className='h-8 w-8 hover:stroke-yellow-500 hover:fill-yellow-500 cursor-pointer' />
 				</div>
 			</div>
-			{/* <div>
-				<p className='inline-block text-sm font-bold text-gray-200'>{`${city}, ${state}`}</p>
-			</div> */}
-			<ul>
-				<li className="grid grid-cols-2">
-					<span className='font-bold text-gray-200 text-sm'>Currently:</span>
-					<span className="text-gray-500 text-sm">{getCurrentTimeInTimezone(timezone)}</span>
-				</li>
-				{/* <li className="grid grid-cols-2">
-					<span className='font-bold text-gray-200 text-sm'>Timezone:</span>
-					<span className="text-gray-500 text-sm">{timezone}</span>
-				</li>
-				<li className="grid grid-cols-2">
-					<span className='font-bold text-gray-200 text-sm'>Sunrise:</span>
-					<span className="text-gray-500 text-sm">{formatUnixTimestampToEasyRead(sunrise, timezone)}</span>
-				</li>
-				<li className="grid grid-cols-2">
-					<span className='font-bold text-gray-200 text-sm'>Sunset:</span>
-					<span className="text-gray-500 text-sm">{formatUnixTimestampToEasyRead(sunset, timezone)}</span>
-				</li>
-				<li className="grid grid-cols-2">
-					<span className='font-bold text-gray-200 text-sm'>Temp:</span>
-					<span className="text-gray-500 text-sm">{Math.round(temp)}{'°F'}</span>
-				</li> */}
-				{/* <li className="grid grid-cols-2">
-					<span className='font-bold text-gray-200 text-sm'>Feels Like:</span>
-					<span className="text-gray-500 text-sm">{Math.round(feelsLike)}{'°F'}</span>
-				</li> */}
-				{/* <li className="grid grid-cols-2">
-					<span className='font-bold text-gray-200 text-sm'>Weather:</span>
-					<span className="text-gray-500 text-sm">{weatherTitle}</span>
-				</li> */}
-			</ul>
+
 		</div>
 	)
 }
@@ -102,7 +71,7 @@ const WeatherCard24Hr = ({
 	weatherDescription: string;
 	timeWillBe: number;
 }) => {
-	
+
 	return (
 		<div className='grid grid-cols-12 gap-4 py-4'>
 			<div className='w-full col-span-2'>
@@ -117,13 +86,58 @@ const WeatherCard24Hr = ({
 					{formatUnixTimestampToEasyRead(timeWillBe, timezone)}
 				</span>
 				<div className='flex space-x-1.5 mt-2'>
-					<span className="text-gray-500 text-sm">{Math.round(temp)}{'°F'}</span>
+					<span className="text-gray-500 text-sm">{Math.round(temp as any as number)}{'°F'}</span>
 					<span className="text-gray-500 text-sm">{weatherTitle}</span>
 				</div>
 			</div>
 		</div>
 	)
 }
+
+const WeatherSkeletonLoader = () => (
+	<>
+		{/* Yeah this could be cooler but also shut up my copilot was turned off */}
+		{[1, 2, 3, 4, 5].map((id) => (
+			<li key={id} className='col-span-12 md:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
+				<div className='w-full mb-4 pl-4'>
+					<div className='rounded-2xl h-[60px] w-[60px] bg-gray-800 animate-pulse'></div>
+				</div>
+				<div>
+					<span className='rounded-2xl w-[150px] h-[20px] block bg-gray-800 animate-pulse'></span>
+				</div>
+			</li>
+		))}
+	</>
+)
+
+const LoadMoreResultsButton = () => (
+	<li className='col-span-12 md:col-span-6 lg:col-span-4 border border-dashed border-gray-800 rounded bg-gray-900 flex flex-col p-4 justify-center items-center'>
+		<button className='inline-block text-sm mx-auto'>Load More Results</button>
+	</li>
+)
+
+interface Locations {
+	id: string;
+	geolocations: {
+		id: string;
+		lat: number;
+		lon: number;
+		formatted: string;
+		city: string;
+		state: string;
+	}
+}
+
+interface HourlyConditions {
+	dt: number;
+	temp: string;
+	weather: {
+		main: string;
+		icon: string;
+		description: string;
+	}[]
+}
+
 export function MainFeed() {
 	const locations = globalStore((state) => state.locations);
 	const weather = globalStore((state) => state.weather);
@@ -131,44 +145,21 @@ export function MainFeed() {
 	return (
 		<div>
 			<div className='mb-8'>
-				<h2 className='text-2xl font-bold'>My Feed</h2>
+				<h2 className='text-2xl font-bold'>{'My Feed'}</h2>
 			</div>
-
 			<div className='mb-4'>
-				<h3 className='text-lg font-bold'>Current Weather</h3>
+				<h3 className='text-lg font-bold'>{'Current Weather'}</h3>
 			</div>
 			<ul className='gap-6 w-full grid grid-cols-12'>
-				{!locations || locations.length === 0 && (
-					<>
-						{/* Yeah this could be cooler but also shut up my copilot was turned off */}
-						{[1, 2, 3, 4, 5].map((id) => (
-							<li key={id} className='col-span-12 md:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
-								<div className='w-full mb-4 pl-4'>
-									<div className='rounded-2xl h-[60px] w-[60px] bg-gray-800 animate-pulse'></div>
-								</div>
-								<div>
-									<span className='rounded-2xl w-[150px] h-[20px] block bg-gray-800 animate-pulse'></span>
-								</div>
-							</li>
-						))}
-					</>
-				)}
+				{/* Loading */}
+				{!locations || locations.length === 0 && <WeatherSkeletonLoader />}
 
-				{locations && locations.map((place: {
-					id: string;
-					geolocations: {
-						id: string;
-						lat: number;
-						lon: number;
-						formatted: string;
-						city: string;
-						state: string;
-					}
-				}) => {
+
+				{locations && locations.map((place: Locations) => {
 					const location = weather.find((item: any) => place.geolocations.formatted === item.formatted);
 
 					return (
-						<li key={place.id} className='col-span-12 md:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
+						<li key={place.id} className='col-span-12 md:col-span-6 lg:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
 							<WeatherCard
 								formatted={place.geolocations.formatted}
 								city={place.geolocations.city}
@@ -185,76 +176,38 @@ export function MainFeed() {
 						</li>
 					)
 				})}
-				{locations && locations.length !== 0 && (
-					<li className='col-span-12 md:col-span-4 border border-dashed border-gray-800 rounded bg-gray-900 flex flex-col p-4 justify-center items-center'>
-						<p className='inline-block text-sm mx-auto'>Load More Results</p>
-					</li>
-				)}
+				{locations && locations.length !== 0 && <LoadMoreResultsButton />}
 			</ul>
 
 			<div className='mt-16 mb-4'>
-				<h3 className='text-lg font-bold'>Over the next 24 hours</h3>
+				<h3 className='text-lg font-bold'>{'Over the next 24 hours'}</h3>
 			</div>
 			<ul className='gap-6 space-y-4 w-full grid grid-cols-12'>
-				{!locations || locations.length === 0 && (
-					<>
-						{/* Yeah this could be cooler but also shut up my copilot was turned off */}
-						{[1, 2, 3, 4, 5].map((id) => (
-							<li key={id} className='col-span-12 md:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
-								<div className='w-full mb-4 pl-4'>
-									<div className='rounded-2xl h-[60px] w-[60px] bg-gray-800 animate-pulse'></div>
-								</div>
-								<div>
-									<span className='rounded-2xl w-[150px] h-[20px] block bg-gray-800 animate-pulse'></span>
-								</div>
-							</li>
-						))}
-					</>
-				)}
+				{/* Loading */}
+				{!locations || locations.length === 0 && <WeatherSkeletonLoader />}
 
-				{locations && locations.map((place: {
-					id: string;
-					geolocations: {
-						id: string;
-						lat: number;
-						lon: number;
-						formatted: string;
-					}
-				}) => {
+				{locations && locations.map((place: Locations) => {
 					const location = weather.find((item: any) => place.geolocations.formatted === item.formatted)
 					const hours = location.hourly;
 
 					return (
-						<li key={place.id} className='col-span-12 md:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4 my-4'>
+						<li key={place.id} className='col-span-12 md:col-span-6 lg:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4 my-4'>
 							<h3 className='text-sm font-bold text-gray-200'>{place.geolocations.formatted}</h3>
-							{hours && hours.slice(0, 24).map((conditionByHour: {
-								dt: number;
-								temp: string;
-								weather: {
-									main: string;
-									icon: string;
-									description: string;
-								}[]
-							}) => (
-								<>
-									<WeatherCard24Hr
-										timeWillBe={conditionByHour.dt}
-										timezone={location.timezone}
-										temp={conditionByHour.temp}
-										weatherTitle={conditionByHour.weather[0].main}
-										imgHref={conditionByHour.weather[0].icon}
-										weatherDescription={conditionByHour.weather[0].description}
-									/>
-								</>
+							{hours && hours.slice(0, 24).map((conditionByHour: HourlyConditions) => (
+								<WeatherCard24Hr
+									timeWillBe={conditionByHour.dt}
+									timezone={location.timezone}
+									temp={conditionByHour.temp}
+									weatherTitle={conditionByHour.weather[0].main}
+									imgHref={conditionByHour.weather[0].icon}
+									weatherDescription={conditionByHour.weather[0].description}
+								/>
 							))}
 						</li>
 					)
 				})}
-				{locations && locations.length !== 0 && (
-					<li className='col-span-12 md:col-span-4 border border-dashed border-gray-800 rounded bg-gray-900 flex flex-col p-4 justify-center items-center'>
-						<p className='inline-block text-sm mx-auto'>Load More Results</p>
-					</li>
-				)}
+
+				{locations && locations.length !== 0 && <LoadMoreResultsButton />}
 			</ul>
 
 		</div>
