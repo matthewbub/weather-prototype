@@ -2,9 +2,7 @@
 
 import { globalStore } from '@/store';
 import { formatUnixTimestampToEasyRead, getCurrentTimeInTimezone } from '@/utils/dates';
-import { kelvinToFahrenheit } from '@/utils/weather';
 import { weatherImages } from '@/lib/constants/weather';
-import Image from 'next/image';
 import { StarIcon } from '@/components/icons';
 
 const WeatherCard = ({
@@ -35,7 +33,7 @@ const WeatherCard = ({
 	return (
 		<div className='space-y-6'>
 			<div className='w-full flex justify-between'>
-				<div className='flex items-center'>
+				<div className='flex'>
 					<img
 						className='h-[80px] w-[80px] object-cover'
 						src={`https://azhrbvulmwgxcijoaenn.supabase.co/storage/v1/object/public/weatherapp/${weatherImages[imgHref]}color.png`}
@@ -116,8 +114,9 @@ const LoadMoreResultsButton = () => (
 	</li>
 )
 
-interface Locations {
+interface WeatherFromAPI {
 	id: string;
+	timezone: string;
 	geolocations: {
 		id: string;
 		lat: number;
@@ -125,6 +124,29 @@ interface Locations {
 		formatted: string;
 		city: string;
 		state: string;
+	};
+	current: {
+		id: string;
+		sunrise: number;
+		sunset: number;
+		temp: number;
+		feels_like: number;
+		weather: {
+			id: string;
+			main: string;
+			icon: string;
+			description: string;
+		}[]
+	}
+	hourly: {
+		dt: number;
+		temp: string;
+		weather: {
+			main: string;
+			icon: string;
+			description: string;
+			id: string;
+		}[]
 	}
 }
 
@@ -135,13 +157,14 @@ interface HourlyConditions {
 		main: string;
 		icon: string;
 		description: string;
+		id: string;
 	}[]
 }
 
 export function MainFeed() {
 	const locations = globalStore((state) => state.locations);
 	const weather = globalStore((state) => state.weather);
-
+	console.log(weather)
 	return (
 		<div>
 			<div className='mb-8'>
@@ -152,31 +175,28 @@ export function MainFeed() {
 			</div>
 			<ul className='gap-6 w-full grid grid-cols-12'>
 				{/* Loading */}
-				{!locations || locations.length === 0 && <WeatherSkeletonLoader />}
+				{!weather || weather.length === 0 && <WeatherSkeletonLoader />}
 
-
-				{locations && locations.map((place: Locations) => {
-					const location = weather.find((item: any) => place.geolocations.formatted === item.formatted);
-
+				{weather && weather.map((currentWeatherConditions: WeatherFromAPI) => {
 					return (
-						<li key={place.id} className='col-span-12 md:col-span-6 lg:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
+						<li key={currentWeatherConditions.id} className='col-span-12 md:col-span-6 lg:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
 							<WeatherCard
-								formatted={place.geolocations.formatted}
-								city={place.geolocations.city}
-								state={place.geolocations.state}
-								timezone={location.timezone}
-								sunrise={location.current.sunrise}
-								sunset={location.current.sunset}
-								temp={location.current.temp}
-								feelsLike={location.current.feels_like}
-								weatherTitle={location.current.weather[0].main}
-								imgHref={location.current.weather[0].id}
-								weatherDescription={location.current.weather[0].description}
+								formatted={currentWeatherConditions.geolocations.formatted}
+								city={currentWeatherConditions.geolocations.city}
+								state={currentWeatherConditions.geolocations.state}
+								timezone={currentWeatherConditions?.timezone}
+								sunrise={currentWeatherConditions.current.sunrise}
+								sunset={currentWeatherConditions.current.sunset}
+								temp={currentWeatherConditions.current.temp}
+								feelsLike={currentWeatherConditions.current.feels_like}
+								weatherTitle={currentWeatherConditions.current.weather[0].main}
+								imgHref={currentWeatherConditions.current.weather[0].id}
+								weatherDescription={currentWeatherConditions.current.weather[0].description}
 							/>
 						</li>
 					)
 				})}
-				{locations && locations.length !== 0 && <LoadMoreResultsButton />}
+				{weather && weather.length !== 0 && <LoadMoreResultsButton />}
 			</ul>
 
 			<div className='mt-16 mb-4'>
@@ -184,19 +204,19 @@ export function MainFeed() {
 			</div>
 			<ul className='gap-6 space-y-4 w-full grid grid-cols-12'>
 				{/* Loading */}
-				{!locations || locations.length === 0 && <WeatherSkeletonLoader />}
+				{!weather || weather.length === 0 && <WeatherSkeletonLoader />}
 
-				{locations && locations.map((place: Locations) => {
-					const location = weather.find((item: any) => place.geolocations.formatted === item.formatted)
-					const hours = location.hourly;
+				{weather && weather.map((currentWeatherConditions: WeatherFromAPI) => {
+					// const location = weather.find((item: any) => place.geolocations.formatted === item.formatted)
+					// const hours = location.hourly;
 
 					return (
-						<li key={place.id} className='col-span-12 md:col-span-6 lg:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4 my-4'>
-							<h3 className='text-sm font-bold text-gray-200'>{place.geolocations.formatted}</h3>
-							{hours && hours.slice(0, 24).map((conditionByHour: HourlyConditions) => (
+						<li key={currentWeatherConditions.id} className='col-span-12 md:col-span-6 lg:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4 my-4'>
+							<h3 className='text-sm font-bold text-gray-200'>{currentWeatherConditions.geolocations.formatted}</h3>
+							{currentWeatherConditions.hourly && currentWeatherConditions.hourly.slice(0, 24).map((conditionByHour: HourlyConditions) => (
 								<WeatherCard24Hr
 									timeWillBe={conditionByHour.dt}
-									timezone={location.timezone}
+									timezone={currentWeatherConditions?.timezone}
 									temp={conditionByHour.temp}
 									weatherTitle={conditionByHour.weather[0].main}
 									imgHref={conditionByHour.weather[0].icon}
@@ -207,7 +227,7 @@ export function MainFeed() {
 					)
 				})}
 
-				{locations && locations.length !== 0 && <LoadMoreResultsButton />}
+				{weather && weather.length !== 0 && <LoadMoreResultsButton />}
 			</ul>
 
 		</div>

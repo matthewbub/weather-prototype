@@ -9,7 +9,8 @@ import { globalStore } from '@/store';
 import { debounce } from '@/utils/debounce';
 import { useClickOutside } from '@/lib/hooks';
 
-export const LocationLookupForm = () => {
+export const 	 LocationLookupForm = () => {
+	// locationLookupSearchResults
 	const searchResults = store((state) => state.searchResults);
 	const loading = store((state) => state.loading);
 	const setSearchResults = store((state) => state.setSearchResults);
@@ -21,6 +22,7 @@ export const LocationLookupForm = () => {
 	const setModalIsOpen = store((state) => state.setModalIsOpen);
 	const locationInputValue = store((state) => state.locationInputValue);
 	const setLocationInputValue = store((state) => state.setLocationInputValue);
+	const setWeather = globalStore((state) => state.setWeather);
 
 	const fetchSearchResults = async (value: string) => {
 		setLoading(true);
@@ -81,9 +83,14 @@ export const LocationLookupForm = () => {
 				city: selectedLocation.city,
 				state: selectedLocation.state,
 				county: selectedLocation.county
-			})
+			}),
+			cache: 'no-store'
 		});
 
+		// This request adds the new location to our db
+		// It returns the new location, but not the weather 
+		// 		That's intention as this shouldn't be used as a source of state
+		// 		Unless it's a notification / alert
 		const addLocationResponse = await addLocationData.json();
 
 		if (!addLocationResponse?.error) {
@@ -92,11 +99,13 @@ export const LocationLookupForm = () => {
 
 		setSelectedLocationToNull();
 
+		console.log('addLocationResponse', addLocationResponse);
+
 		async function resetLocations() {
 			// clear previous data
 			setLocations([]);
 
-			const locationData = await fetch('/api/location');
+			const locationData = await fetch('/api/location',  { cache: 'no-store' });
 			const parsedLocationData = await locationData.json();
 
 			if (parsedLocationData.error) {
@@ -109,7 +118,7 @@ export const LocationLookupForm = () => {
 
 			setLocationInputValue('')
 			setLocations(parsedLocationData?.data.locations);
-
+			setWeather(parsedLocationData?.data.weather)
 		}
 		resetLocations();
 	}

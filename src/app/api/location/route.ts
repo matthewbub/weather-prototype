@@ -93,9 +93,6 @@ export async function POST(request: Request) {
 		county: string;
 	} | null = null;
 	
-	console.log('requestData');
-	console.log(requestData);
-
 	const { data: insertData, error: insertError } = await supabase
 		.from("geolocations")
 		.insert([{ 

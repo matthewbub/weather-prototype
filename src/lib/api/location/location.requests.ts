@@ -2,8 +2,8 @@ import { supabase } from "@/utils/supabase";
 import { skirtFailedResponse, bypassOkResponse } from "@/utils/response";
 import { fetchOpenWeatherApi } from "@/utils/openWeather";
 
-export const querySupabaseForUserSelectedLocations = async (id: string, lastRecord: string) => {
-	const { data: userSelected, error: userSelectedGeoLocationsError, ...rest } = await supabase
+export const querySupabaseForUserSelectedLocations = async (id: string, lastRecord?: string) => {
+	const { data: userSelected, error: userSelectedGeoLocationsError } = await supabase
 		.from('weatherapp_feed_locations_by_user')
 		.select(`
 			id,
@@ -11,9 +11,6 @@ export const querySupabaseForUserSelectedLocations = async (id: string, lastReco
 		`, { count: 'exact' })
 		.eq('user', id)
 		.order('created_at', { ascending: false })
-		.limit(5)
-
-		console.log(rest)
 
 		if (userSelectedGeoLocationsError) {
 			return skirtFailedResponse(userSelectedGeoLocationsError.message)
@@ -43,7 +40,8 @@ export const queryOpenWeatherApiForUsersLocations = async (locations: LocationTy
 			const weatherData = await fetchOpenWeatherApi(lat.toString(), lon.toString());
 			weatherDataForAllLocations.push({
 				formatted: formatted, 
-				...weatherData
+				...weatherData,
+				...location
 			});
 		} catch (error) {
 			return skirtFailedResponse(`Failed to fetch weather for location (${lat}, ${lon}):`);
@@ -51,4 +49,17 @@ export const queryOpenWeatherApiForUsersLocations = async (locations: LocationTy
 	}
 
 	return bypassOkResponse(weatherDataForAllLocations);
+}
+
+
+export const queryOpenWeatherApiForSingleLocation = async (lat: number, lon: number, formatted: string) => {	
+	try {
+		const weatherData = await fetchOpenWeatherApi(lat.toString(), lon.toString());
+		return bypassOkResponse({
+			formatted: formatted, 
+			...weatherData
+		})
+	} catch (error) {
+		return skirtFailedResponse(`Failed to fetch weather for location (${lat}, ${lon}):`);
+	}
 }

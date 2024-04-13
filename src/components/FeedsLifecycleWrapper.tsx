@@ -8,18 +8,17 @@ export const FeedsLifecycleWrapper = ({ children }: { children: React.ReactEleme
 	const setWeather = globalStore((state) => state.setWeather)
 	
 	async function setLocationsIntoGlobalState () {
-		// clear previous data
+		// // clear previous data
 		setLocations([]);
-		setWeather({});
+		setWeather([]);
 
-		const locationData = await fetch('/api/location');
+		const temp = await fetch('/api/weather')
+		const locationData = await fetch('/api/location',  { cache: 'no-store' });
 		const parsedLocationData = await locationData.json();
 
 		if (parsedLocationData.error) {
 			alert('something went wrong' + parsedLocationData.message)
 		}
-
-		console.log('FeedsLifecycleWrapper in useEffect on mount', {LOG: parsedLocationData?.data});
 
 		// This sets the users specified locations into a global state
 		// to later be accessed throughout the app
