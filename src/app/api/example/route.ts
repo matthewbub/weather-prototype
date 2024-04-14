@@ -1,8 +1,15 @@
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request) {
+type Params = {
+  team: string
+}
+ 
+export async function GET(request: Request, context: { params: Params }) {
+	const team = context.params.team // '1'
+
 	return NextResponse.json({
 		error: false,
+		data: team
 	});
 }
 
@@ -11,6 +18,7 @@ export async function POST(request: Request) {
 	
 	return NextResponse.json({
 		error: false,
+		data: requestData
 	});
 }
 
