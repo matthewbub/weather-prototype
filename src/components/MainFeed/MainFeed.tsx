@@ -207,9 +207,6 @@ export function MainFeed() {
 				{!weather || weather.length === 0 && <WeatherSkeletonLoader />}
 
 				{weather && weather.map((currentWeatherConditions: WeatherFromAPI) => {
-					// const location = weather.find((item: any) => place.geolocations.formatted === item.formatted)
-					// const hours = location.hourly;
-
 					return (
 						<li key={currentWeatherConditions.id} className='col-span-12 md:col-span-6 lg:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4 my-4'>
 							<h3 className='text-sm font-bold text-gray-200'>{currentWeatherConditions.geolocations.formatted}</h3>

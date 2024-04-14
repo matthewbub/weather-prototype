@@ -2,49 +2,23 @@ import { NextResponse } from "next/server";
 import Joi from 'joi';
 import { supabase } from "@/utils/supabase";
 import { useAppUserOnServer } from "@/utils/useAppUser";
-import { fetchOpenWeatherApi } from "@/utils/openWeather";
-import { nwsWeatherAlertsByState } from "@/utils/nwsWeather"
-import { okResponse, failResponse, skirtFailedResponse } from "@/utils/response";
-import { queryOpenWeatherApiForUsersLocations, querySupabaseForUserSelectedLocations } from '@/lib/api/location/location.requests';
+import { failResponse } from "@/utils/response";
+import { SanitizedUserTypes, handleBatchedWeatherByLocations } from '@/lib/api/location/location.requests';
+
 interface PostResponseTypes {
 	error: boolean;
 	message: string;
 	data: any | null;
 }
 
-export async function GET() {
+export async function GET() {	
 	// Get all locations the current user watches
 	const sanitizedUser = await useAppUserOnServer();
-
 	const failedToAuthenticate = sanitizedUser.error || !sanitizedUser.data?.user.id;
 	if (failedToAuthenticate) {
 		return failResponse(sanitizedUser.message)
 	}
-
-	const getUserSelectedGeoLocations = await querySupabaseForUserSelectedLocations(
-		sanitizedUser.data?.user.id as string
-	);
-	if (getUserSelectedGeoLocations.error) {
-		return failResponse(getUserSelectedGeoLocations.message)
-	}
-
-	const userSelectedGeoLocations = getUserSelectedGeoLocations?.data;
-	// Im just leaving this because it's easier to look at for some reason
-	// userSelectedGeoLocations[x].geolocations.lat
-	// userSelectedGeoLocations[x].geolocations.lon
-
-	// Array to hold weather data for all locations
-	const weatherDataForAllLocations = await queryOpenWeatherApiForUsersLocations(
-		getUserSelectedGeoLocations?.data
-	)
-	if (weatherDataForAllLocations?.error) {
-		return failResponse(weatherDataForAllLocations.message);
-	}
-
-	return okResponse({
-		locations: userSelectedGeoLocations,
-		weather: weatherDataForAllLocations?.data
-	});
+	return handleBatchedWeatherByLocations(sanitizedUser as unknown as SanitizedUserTypes);
 }
 
 // Ensure no nefarious data is being sent

@@ -1,6 +1,6 @@
 import { supabase } from "@/utils/supabase";
-import { skirtFailedResponse, bypassOkResponse } from "@/utils/response";
-import { fetchOpenWeatherApi } from "@/utils/openWeather";
+import { skirtFailedResponse, bypassOkResponse, failResponse, okResponse } from "@/utils/response";
+import { fetchOpenWeatherApiWithCoordinates } from "@/utils/openWeather";
 
 export const querySupabaseForUserSelectedLocations = async (id: string, lastRecord?: string) => {
 	const { data: userSelected, error: userSelectedGeoLocationsError } = await supabase
@@ -37,7 +37,7 @@ export const queryOpenWeatherApiForUsersLocations = async (locations: LocationTy
 	for (const location of locations) {
 		const { lat, lon, formatted } = location.geolocations;
 		try {
-			const weatherData = await fetchOpenWeatherApi(lat.toString(), lon.toString());
+			const weatherData = await fetchOpenWeatherApiWithCoordinates(lat.toString(), lon.toString());
 			weatherDataForAllLocations.push({
 				formatted: formatted, 
 				...weatherData,
@@ -54,7 +54,7 @@ export const queryOpenWeatherApiForUsersLocations = async (locations: LocationTy
 
 export const queryOpenWeatherApiForSingleLocation = async (lat: number, lon: number, formatted: string) => {	
 	try {
-		const weatherData = await fetchOpenWeatherApi(lat.toString(), lon.toString());
+		const weatherData = await fetchOpenWeatherApiWithCoordinates(lat.toString(), lon.toString());
 		return bypassOkResponse({
 			formatted: formatted, 
 			...weatherData
@@ -62,4 +62,36 @@ export const queryOpenWeatherApiForSingleLocation = async (lat: number, lon: num
 	} catch (error) {
 		return skirtFailedResponse(`Failed to fetch weather for location (${lat}, ${lon}):`);
 	}
+}
+
+export interface SanitizedUserTypes {
+	data?: {
+		user: {
+			id: string;
+		}
+	}
+}
+
+export const handleBatchedWeatherByLocations = async (sanitizedUser: SanitizedUserTypes) => {
+	const getUserSelectedGeoLocations = await querySupabaseForUserSelectedLocations(
+		sanitizedUser.data?.user.id as string
+	);
+
+	if (getUserSelectedGeoLocations.error) {
+		return failResponse(getUserSelectedGeoLocations.message)
+	}
+
+	const userSelectedGeoLocations = getUserSelectedGeoLocations?.data;
+
+	const weatherDataForAllLocations = await queryOpenWeatherApiForUsersLocations(
+		getUserSelectedGeoLocations?.data
+	)
+	if (weatherDataForAllLocations?.error) {
+		return failResponse(weatherDataForAllLocations.message);
+	}
+
+	return okResponse({
+		locations: userSelectedGeoLocations,
+		weather: weatherDataForAllLocations?.data
+	});
 }

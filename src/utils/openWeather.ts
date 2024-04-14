@@ -1,7 +1,7 @@
 const openWeatherApiKey = process.env.OPEN_WEATHER_API_KEY;
 
 // https://openweathermap.org/api/one-call-3#current
-export const fetchOpenWeatherApi = async (lat: string, lon: string) => {
+export const fetchOpenWeatherApiWithCoordinates = async (lat: string, lon: string) => {
 	if (!openWeatherApiKey) {
 		throw new Error('Missing OPEN_WEATHER_API_KEY');
 	}
