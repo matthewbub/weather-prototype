@@ -71,7 +71,7 @@ const WeatherCard = ({
 			return;
 		}
 
-		const favoriteLocation = await fetch('/api/add-favorite', {
+		const favoriteLocation = await fetch('/api/favorite', {
 			method: 'POST',
 			body: JSON.stringify({
 				formatted: formatted,
