@@ -148,3 +148,11 @@ Basically we're still at the start, but things are progressing in a safe mannor 
 I always want to feel like I'm smart right, but sometimes my brute force approaches can conflict with being smart. I had this recollection of having to find out how to convert kelvin to fahrenheit like 5 years ago now, so here I go bustin out a conversion method, get that working; then I figure hey let me slap out a celsiuc one as well. Then I end up on
 
 I'm seeing now that all of the weather assets i uploaded are 1mb in size and come to find out, that adds up quick when there's like 100 + icons that are trying to render. Turns out Open Weather API is using 516 B sized images at the default scale which is .. impressively small lol. I'm annoyed at this because it's something I should have considered before uploading all of these images to my storage; not sure when I'll get around to optomizing thoses but I know i'm going to have to look into it.
+
+
+
+### Geolocations
+Geolocations are a collection of locations we've collected while sending requests to the api. This allows us to work with the unique ID for each location. 
+
+Note: We store longitude and latitude coordinates here as well, but those change over time.
+

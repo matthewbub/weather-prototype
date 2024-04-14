@@ -4,6 +4,7 @@ import { globalStore } from '@/store';
 import { formatUnixTimestampToEasyRead, getCurrentTimeInTimezone } from '@/utils/dates';
 import { weatherImages } from '@/lib/constants/weather';
 import { StarIcon } from '@/components/icons';
+import { WeatherFromAPI, HourlyConditions } from './MainFeed.types';
 
 const WeatherCard = ({
 	city,
@@ -16,7 +17,8 @@ const WeatherCard = ({
 	temp,
 	feelsLike,
 	weatherTitle,
-	weatherDescription
+	weatherDescription,
+	usersGeolocationId
 }: {
 	city: string;
 	state: string;
@@ -29,7 +31,26 @@ const WeatherCard = ({
 	feelsLike: number;
 	weatherTitle: string;
 	weatherDescription: string;
+	usersGeolocationId: string;
 }) => {
+	const handleFavoriteAction = async () => {
+		// don't react if nothing is selected
+		if (!usersGeolocationId) {
+			return;
+		}
+
+		const favoriteLocation = fetch('/api/add-favorite', {
+			method: 'POST',
+			body: JSON.stringify({
+				formatted: formatted,
+				usersGeolocationId: usersGeolocationId
+			}),
+			cache: 'no-store'
+		});
+
+		// TODO handle response
+
+	}
 	return (
 		<div className='space-y-6'>
 			<div className='w-full flex justify-between'>
@@ -46,7 +67,9 @@ const WeatherCard = ({
 					</div>
 				</div>
 				<div className='flex align-top'>
-					<StarIcon className='h-8 w-8 hover:stroke-yellow-500 hover:fill-yellow-500 cursor-pointer' />
+					<button onClick={handleFavoriteAction}>
+						<StarIcon className='h-8 w-8 hover:stroke-yellow-500 hover:fill-yellow-500 cursor-pointer' />
+					</button>
 				</div>
 			</div>
 
@@ -114,57 +137,8 @@ const LoadMoreResultsButton = () => (
 	</li>
 )
 
-interface WeatherFromAPI {
-	id: string;
-	timezone: string;
-	geolocations: {
-		id: string;
-		lat: number;
-		lon: number;
-		formatted: string;
-		city: string;
-		state: string;
-	};
-	current: {
-		id: string;
-		sunrise: number;
-		sunset: number;
-		temp: number;
-		feels_like: number;
-		weather: {
-			id: string;
-			main: string;
-			icon: string;
-			description: string;
-		}[]
-	}
-	hourly: {
-		dt: number;
-		temp: string;
-		weather: {
-			main: string;
-			icon: string;
-			description: string;
-			id: string;
-		}[]
-	}
-}
-
-interface HourlyConditions {
-	dt: number;
-	temp: string;
-	weather: {
-		main: string;
-		icon: string;
-		description: string;
-		id: string;
-	}[]
-}
-
 export function MainFeed() {
-	const locations = globalStore((state) => state.locations);
 	const weather = globalStore((state) => state.weather);
-	console.log(weather)
 	return (
 		<div>
 			<div className='mb-8'>
@@ -181,6 +155,7 @@ export function MainFeed() {
 					return (
 						<li key={currentWeatherConditions.id} className='col-span-12 md:col-span-6 lg:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
 							<WeatherCard
+								usersGeolocationId={currentWeatherConditions.id}
 								formatted={currentWeatherConditions.geolocations.formatted}
 								city={currentWeatherConditions.geolocations.city}
 								state={currentWeatherConditions.geolocations.state}

@@ -99,8 +99,6 @@ export const 	 LocationLookupForm = () => {
 
 		setSelectedLocationToNull();
 
-		console.log('addLocationResponse', addLocationResponse);
-
 		async function resetLocations() {
 			// clear previous data
 			setLocations([]);
