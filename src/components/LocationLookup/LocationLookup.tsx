@@ -23,7 +23,8 @@ export const 	 LocationLookupForm = () => {
 	const locationInputValue = store((state) => state.locationInputValue);
 	const setLocationInputValue = store((state) => state.setLocationInputValue);
 	const setWeather = globalStore((state) => state.setWeather);
-
+	const setFavorites = globalStore((state) => state.setFavorites);
+	
 	const fetchSearchResults = async (value: string) => {
 		setLoading(true);
 
@@ -116,7 +117,8 @@ export const 	 LocationLookupForm = () => {
 
 			setLocationInputValue('')
 			setLocations(parsedLocationData?.data.locations);
-			setWeather(parsedLocationData?.data.weather)
+			setWeather(parsedLocationData?.data.weather);
+			setFavorites(parsedLocationData?.data.favorites);
 		}
 		resetLocations();
 	}

@@ -5,6 +5,7 @@ import { formatUnixTimestampToEasyRead, getCurrentTimeInTimezone } from '@/utils
 import { weatherImages } from '@/lib/constants/weather';
 import { StarIcon } from '@/components/icons';
 import { WeatherFromAPI, HourlyConditions } from './MainFeed.types';
+import clsx from 'clsx';
 
 const WeatherCard = ({
 	city,
@@ -33,13 +34,44 @@ const WeatherCard = ({
 	weatherDescription: string;
 	usersGeolocationId: string;
 }) => {
+	const favorites = globalStore((state) => state.favorites);
+	const setLocations = globalStore((state) => state.setLocations);
+	const setWeather = globalStore((state) => state.setWeather);
+	const setFavorites = globalStore((state) => state.setFavorites);
+
+	const isAFavorite = favorites.find((fav) => fav.location === usersGeolocationId);
+
+	if (isAFavorite) {
+
+		console.log({
+			isAFavorite,
+			usersGeolocationId
+		});
+	}
+
+	async function resetLocations() {
+			const locationData = await fetch('/api/location',  { cache: 'no-store' });
+			const parsedLocationData = await locationData.json();
+
+			if (parsedLocationData.error) {
+				alert('something went wrong: ' + parsedLocationData.message)
+				return
+			}
+
+			setLocations(parsedLocationData?.data.locations);
+			setWeather(parsedLocationData?.data.weather);
+			setFavorites(parsedLocationData?.data.favorites);
+		}
+		
+
+
 	const handleFavoriteAction = async () => {
 		// don't react if nothing is selected
 		if (!usersGeolocationId) {
 			return;
 		}
 
-		const favoriteLocation = fetch('/api/add-favorite', {
+		const favoriteLocation = await fetch('/api/add-favorite', {
 			method: 'POST',
 			body: JSON.stringify({
 				formatted: formatted,
@@ -48,7 +80,14 @@ const WeatherCard = ({
 			cache: 'no-store'
 		});
 
-		// TODO handle response
+		const response = await favoriteLocation.json()
+
+		if (response.error) {
+			alert(response.message)
+		}
+
+		resetLocations();
+		
 
 	}
 	return (
@@ -68,7 +107,12 @@ const WeatherCard = ({
 				</div>
 				<div className='flex align-top'>
 					<button onClick={handleFavoriteAction}>
-						<StarIcon className='h-8 w-8 hover:stroke-yellow-500 hover:fill-yellow-500 cursor-pointer' />
+						<StarIcon className={clsx(
+							'h-8 w-8 hover:stroke-yellow-500 hover:fill-yellow-500 cursor-pointer',
+							{
+								'stroke-yellow-500 fill-yellow-500': isAFavorite
+							}
+							)} />
 					</button>
 				</div>
 			</div>

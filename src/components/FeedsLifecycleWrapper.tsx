@@ -5,18 +5,19 @@ import {globalStore} from '@/store';
 
 export const FeedsLifecycleWrapper = ({ children }: { children: React.ReactElement }) => {
 	const setLocations = globalStore((state) => state.setLocations);
-	const setWeather = globalStore((state) => state.setWeather)
+	const setWeather = globalStore((state) => state.setWeather);
+	const setFavorites  = globalStore((state) => state.setFavorites);
 	
 	async function setLocationsIntoGlobalState () {
-		// // clear previous data
 		setLocations([]);
 		setWeather([]);
+		setFavorites([]);
 
-		const temp = await fetch('/api/weather')
 		const locationData = await fetch('/api/location',  { cache: 'no-store' });
 		const parsedLocationData = await locationData.json();
 
 		if (parsedLocationData.error) {
+			// TODO handle this message better
 			alert('something went wrong' + parsedLocationData.message)
 		}
 
@@ -24,6 +25,7 @@ export const FeedsLifecycleWrapper = ({ children }: { children: React.ReactEleme
 		// to later be accessed throughout the app
 		setLocations(parsedLocationData?.data?.locations);
 		setWeather(parsedLocationData?.data?.weather);
+		setFavorites(parsedLocationData?.data?.favorites);
 	}
 
 	const initialRender = () => {

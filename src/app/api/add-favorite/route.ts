@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import Joi from 'joi';
 import { supabase } from "@/utils/supabase";
 import { useAppUserOnServer } from "@/utils/useAppUser";
@@ -85,5 +84,5 @@ export async function POST(request: Request) {
 		return failResponse(newLocationFavorite?.message);
 	}
 
-	return okResponse(newLocationFavorite);
+	return okResponse(newLocationFavorite?.data);
 }
