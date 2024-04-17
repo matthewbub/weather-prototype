@@ -18,10 +18,22 @@ export default async function Home() {
 	return (
 		<FeedsLifecycleWrapper>
 			<div className="pageMargin">
-				<TopNavWithAuth />
-				<LocationLookup />
-				<BasicCalendarV2 />
-				<MainFeed />
+				<TopNavWithAuth />				
+				<div className='grid grid-cols-12 gap-8 md:gap-12'>
+					<div className='col-span-2'>
+						<div className='mb-4'>
+							<h3 className='text-lg font-bold'>{'My locations'}</h3>
+						</div>
+						<ul>
+								
+						</ul>
+					</div>
+					<div className='col-span-7'>
+						{/* <LocationLookup /> */}
+						<MainFeed />
+					</div>
+					<div className='col-span-3'><BasicCalendarV2 /></div>
+				</div>				
 			</div>
 		</FeedsLifecycleWrapper>
 	);

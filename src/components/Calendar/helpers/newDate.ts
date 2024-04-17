@@ -8,5 +8,5 @@ import { magicNumber as mN } from './magicNumber';
  * @returns {Date} A new Date object with the specified values.
  */
 export const newDate = (year: number, month: number, day: number) => {
-  return new Date(year, month - mN('1'), day);
+  return new Date(year, month - 1, day);
 };

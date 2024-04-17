@@ -6,6 +6,7 @@ import { weatherImages } from '@/lib/constants/weather';
 import { StarIcon } from '@/components/icons';
 import { WeatherFromAPI, HourlyConditions } from './MainFeed.types';
 import clsx from 'clsx';
+import { LocationLookup } from '@/components/LocationLookup';
 
 const WeatherCard = ({
 	city,
@@ -176,7 +177,7 @@ const WeatherSkeletonLoader = () => (
 )
 
 const LoadMoreResultsButton = () => (
-	<li className='col-span-12 md:col-span-6 lg:col-span-4 border border-dashed border-gray-800 rounded bg-gray-900 flex flex-col p-4 justify-center items-center'>
+	<li className='col-span-12 md:col-span-6 border border-dashed border-gray-800 rounded bg-gray-900 flex flex-col p-4 justify-center items-center'>
 		<button className='inline-block text-sm mx-auto'>Load More Results</button>
 	</li>
 )
@@ -185,8 +186,9 @@ export function MainFeed() {
 	const weather = globalStore((state) => state.weather);
 	return (
 		<div>
-			<div className='mb-8'>
-				<h2 className='text-2xl font-bold'>{'My Feed'}</h2>
+			<div className='mb-8 flex justify-between'>
+				<h2 className='text-2xl font-bold whitespace-nowrap'>{'Redlands, CA'}</h2>
+				<LocationLookup />
 			</div>
 			<div className='mb-4'>
 				<h3 className='text-lg font-bold'>{'Current Weather'}</h3>
@@ -197,7 +199,7 @@ export function MainFeed() {
 
 				{weather && weather.map((currentWeatherConditions: WeatherFromAPI) => {
 					return (
-						<li key={currentWeatherConditions.id} className='col-span-12 md:col-span-6 lg:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
+						<li key={currentWeatherConditions.id} className='col-span-12 md:col-span-6 border border-gray-800 rounded bg-gray-900 flex flex-col p-4'>
 							<WeatherCard
 								usersGeolocationId={currentWeatherConditions.id}
 								formatted={currentWeatherConditions.geolocations.formatted}
@@ -227,7 +229,7 @@ export function MainFeed() {
 
 				{weather && weather.map((currentWeatherConditions: WeatherFromAPI) => {
 					return (
-						<li key={currentWeatherConditions.id} className='col-span-12 md:col-span-6 lg:col-span-4 border border-gray-800 rounded bg-gray-900 flex flex-col p-4 my-4'>
+						<li key={currentWeatherConditions.id} className='col-span-12 md:col-span-6 border border-gray-800 rounded bg-gray-900 flex flex-col p-4 my-4'>
 							<h3 className='text-sm font-bold text-gray-200'>{currentWeatherConditions.geolocations.formatted}</h3>
 							{currentWeatherConditions.hourly && currentWeatherConditions.hourly.slice(0, 24).map((conditionByHour: HourlyConditions) => (
 								<WeatherCard24Hr

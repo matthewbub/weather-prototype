@@ -1,13 +1,9 @@
 .calendar-widgets__Calendar__component-interface {
-  width: 250px;
-  border: 1px solid rgb(0, 0, 0, 0.1);
-  padding: 0.5em;
-  border-radius: 0.25em;
+	@apply w-full;
 }
 
 .calendar-widgets__Calendar__component {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
+	@apply grid grid-cols-7 border border-gray-700/50 rounded-md;
 }
 
 .calendar-widgets__Calendar__custom-header,
@@ -20,7 +16,7 @@
 }
 
 .calendar-widgets__Calendar__BaseDayComponent__outside-current-month {
-  color: rgb(0, 0, 0, 0.5);
+  color: rgb(255, 255, 255, 0.5);
 }
 
 .calendar-widgets__Calendar__day-name,
@@ -30,8 +26,14 @@
   padding: 0.5em;
 }
 
-.calendar-widgets__Calendar__day-name {
-  background: #5189EC;
-  color: #fff;
-  font-family: 'Roboto', sans-serif;
+.calendar-widgets__Calendar__day-name {  
+	@apply px-0.5 py-1.5 flex justify-center items-center text-white text-xs font-bold bg-blue-500;
+}
+
+.calendar-widgets__Calendar__BaseDayComponent__base-day {
+	@apply h-8 w-8 flex justify-center items-center p-0.5 text-xs;
+}
+
+.is-current-day {
+	@apply bg-purple-600;
 }

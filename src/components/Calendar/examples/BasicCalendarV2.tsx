@@ -60,7 +60,7 @@ const BasicCalendarV2 = () => {
       )}
       customDates={[{
         name: 'Lisa\'s Birthday',
-        date: newDate(2023, 5, 10),
+        date: newDate(2024, 5, 10),
         className: 'birthday',
         tooltip: 'Lisa\'s Birthday'
       }]}
