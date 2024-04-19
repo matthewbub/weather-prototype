@@ -149,7 +149,7 @@ I always want to feel like I'm smart right, but sometimes my brute force approac
 
 I'm seeing now that all of the weather assets i uploaded are 1mb in size and come to find out, that adds up quick when there's like 100 + icons that are trying to render. Turns out Open Weather API is using 516 B sized images at the default scale which is .. impressively small lol. I'm annoyed at this because it's something I should have considered before uploading all of these images to my storage; not sure when I'll get around to optomizing thoses but I know i'm going to have to look into it.
 
-
+April 17th - i gave up on this like 3 times last week but my amazing girlfriend pushed me to keep going and see it through so here we are lol. Today im focused on some external logic that is too precious to me for public release, ill update moer soon
 
 ### Geolocations
 Geolocations are a collection of locations we've collected while sending requests to the api. This allows us to work with the unique ID for each location. 
