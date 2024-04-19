@@ -20,8 +20,8 @@ export interface WeatherFromAPI {
 			main: string;
 			icon: string;
 			description: string;
-		}[]
-	}
+		}[];
+	};
 	hourly: {
 		dt: number;
 		temp: string;
@@ -30,8 +30,8 @@ export interface WeatherFromAPI {
 			icon: string;
 			description: string;
 			id: string;
-		}[]
-	}
+		}[];
+	};
 }
 
 export interface HourlyConditions {
@@ -42,5 +42,5 @@ export interface HourlyConditions {
 		icon: string;
 		description: string;
 		id: string;
-	}[]
+	}[];
 }

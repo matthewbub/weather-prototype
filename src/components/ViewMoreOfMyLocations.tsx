@@ -8,8 +8,8 @@ export const ViewMoreOfMyLocations = () => {
 
 	return (
 		<div>
-			<div className='mb-4'>
-				<h3 className='text-lg font-bold'>{'My locations'}</h3>
+			<div className="mb-4">
+				<h3 className="text-lg font-bold">{"My locations"}</h3>
 			</div>
 			<ul>
 				{/* {data.locations.map((location: any) => (
@@ -18,4 +18,4 @@ export const ViewMoreOfMyLocations = () => {
 			</ul>
 		</div>
 	);
-}
+};

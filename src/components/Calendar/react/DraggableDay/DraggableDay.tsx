@@ -1,14 +1,14 @@
 /* Dependencies */
-import React, { FC } from 'react';
+import React, { FC } from "react";
 
 /* Types */
-import { DraggablesProps } from './DraggableDay.types';
+import { DraggablesProps } from "./DraggableDay.types";
 
 /* Components */
-import { DraggableDayLayout } from './components';
+import { DraggableDayLayout } from "./components";
 
 /* Styles */
-import './Draggables.styles.css';
+import "./Draggables.styles.css";
 
 /**
  * Renders a draggable day component.
@@ -21,15 +21,15 @@ import './Draggables.styles.css';
  * @returns {JSX.Element} - The rendered component.
  */
 const DraggableDay: FC<DraggablesProps> = ({
-  startRow,
-  endRow,
-  initialDraggables
+	startRow,
+	endRow,
+	initialDraggables,
 }) => (
-  <DraggableDayLayout
-    startRow={startRow}
-    endRow={endRow}
-    initialDraggables={initialDraggables}
-  />
+	<DraggableDayLayout
+		startRow={startRow}
+		endRow={endRow}
+		initialDraggables={initialDraggables}
+	/>
 );
 
 export default DraggableDay;

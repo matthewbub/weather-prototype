@@ -4,7 +4,7 @@ import { validateOrCreateUser } from "./validateOrCreateUser";
 export const useAppUserOnServer = async () => {
 	const currentSession = auth();
 	// TODO: Make this dynamic
-	const provider = 'clerk';
+	const provider = "clerk";
 	const sanitizedUser = await validateOrCreateUser(currentSession, provider);
 
 	if (sanitizedUser.error || sanitizedUser.data === null) {
@@ -20,4 +20,4 @@ export const useAppUserOnServer = async () => {
 		message: "User validated.",
 		data: sanitizedUser.data,
 	};
-}
+};

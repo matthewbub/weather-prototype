@@ -6,7 +6,7 @@ interface ValidateOrCreateUserResponse {
 	data: {
 		user: {
 			id: string;
-		}
+		};
 	} | null;
 }
 
@@ -17,13 +17,16 @@ interface ValidateOrCreateUserResponse {
  * This function is used to unify the user creation and validation process.
  * If you're looking for the UUID of the user, you can find it in the response data.
  */
-export async function validateOrCreateUser(session: any, provider: string): Promise<ValidateOrCreateUserResponse> {
+export async function validateOrCreateUser(
+	session: any,
+	provider: string,
+): Promise<ValidateOrCreateUserResponse> {
 	if (!session || !session.sessionId) {
 		return {
 			error: true,
 			message: "No session found.",
 			data: null,
-		}
+		};
 	}
 
 	const { data: user, error } = await supabase
@@ -33,7 +36,7 @@ export async function validateOrCreateUser(session: any, provider: string): Prom
 		.single();
 
 	// Allow for the user to be created if the user is not found
-	if (error && error.code !== "PGRST116") {		
+	if (error && error.code !== "PGRST116") {
 		return {
 			error: true,
 			message: error.message,
@@ -62,8 +65,8 @@ export async function validateOrCreateUser(session: any, provider: string): Prom
 			data: {
 				user: {
 					id: insertData.id,
-				}
-			}
+				},
+			},
 		};
 	}
 
@@ -73,7 +76,7 @@ export async function validateOrCreateUser(session: any, provider: string): Prom
 		data: {
 			user: {
 				id: user.id,
-			}
-		}
+			},
+		},
 	};
 }

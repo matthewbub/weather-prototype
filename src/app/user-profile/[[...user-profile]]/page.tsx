@@ -1,8 +1,8 @@
 // https://clerk.com/docs/components/user/user-profile
 import { UserProfile } from "@clerk/nextjs";
- 
+
 const UserProfilePage = () => (
-  <UserProfile path="/user-profile" routing="path" />
+	<UserProfile path="/user-profile" routing="path" />
 );
- 
+
 export default UserProfilePage;

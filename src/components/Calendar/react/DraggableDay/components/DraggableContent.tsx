@@ -1,8 +1,8 @@
 /* Components */
-import React, { FC } from 'react';
+import React, { FC } from "react";
 
 /* Types */
-import { DraggableContentProps } from '../DraggableDay.types';
+import { DraggableContentProps } from "../DraggableDay.types";
 
 /**
  * Renders the content of a draggable component.
@@ -20,43 +20,41 @@ import { DraggableContentProps } from '../DraggableDay.types';
  * @returns {JSX.Element} - The rendered component.
  */
 const DraggableContent: FC<DraggableContentProps> = ({
-  currentPos,
-  draggableHeight,
-  handleMouseDown,
-  resizeRef,
-  dynamicRows,
-  draggableRef,
-  zIndex,
-  onDelete
+	currentPos,
+	draggableHeight,
+	handleMouseDown,
+	resizeRef,
+	dynamicRows,
+	draggableRef,
+	zIndex,
+	onDelete,
 }) => (
-  <div
-    className="draggable"
-    ref={draggableRef}
-    onMouseDown={handleMouseDown}
-    style={{
-      transform: `translate3d(${currentPos.x}px, ${currentPos.y}px, 0)`,
-      height: `calc(100% / ${dynamicRows} * ${draggableHeight} - 0.5px)`,
-      zIndex: zIndex
-    }}
-  >
-    <span>
-      {'Drag Me'}
-    </span>
-    <button
-      onClick={(e) => {
-        e.stopPropagation();
-        onDelete();
-      }}
-      className="delete-draggable-btn"
-    >
-      {'Delete'}
-    </button>
-    <div
-      ref={resizeRef}
-      className="resize-handle"
-      onMouseDown={handleMouseDown}
-    />
-  </div>
+	<div
+		className="draggable"
+		ref={draggableRef}
+		onMouseDown={handleMouseDown}
+		style={{
+			transform: `translate3d(${currentPos.x}px, ${currentPos.y}px, 0)`,
+			height: `calc(100% / ${dynamicRows} * ${draggableHeight} - 0.5px)`,
+			zIndex: zIndex,
+		}}
+	>
+		<span>{"Drag Me"}</span>
+		<button
+			onClick={(e) => {
+				e.stopPropagation();
+				onDelete();
+			}}
+			className="delete-draggable-btn"
+		>
+			{"Delete"}
+		</button>
+		<div
+			ref={resizeRef}
+			className="resize-handle"
+			onMouseDown={handleMouseDown}
+		/>
+	</div>
 );
 
 export default DraggableContent;

@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface GlobalStoreTypes {
 	locations: any;
@@ -15,5 +15,5 @@ export const globalStore = create<GlobalStoreTypes>((set) => ({
 	weather: [],
 	setWeather: (weather: any) => set({ weather }),
 	favorites: [],
-	setFavorites: (favorites: any) => set({ favorites })
+	setFavorites: (favorites: any) => set({ favorites }),
 }));

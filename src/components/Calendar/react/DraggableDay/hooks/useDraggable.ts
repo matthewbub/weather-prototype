@@ -1,5 +1,5 @@
 /* Dependencies */
-import { useState, MouseEvent } from 'react';
+import { useState, MouseEvent } from "react";
 
 /**
  * Custom hook for draggable behavior.
@@ -8,28 +8,28 @@ import { useState, MouseEvent } from 'react';
  * @returns {Object} - The draggable state and event handlers.
  */
 export const useDraggable = (resizeRef: React.RefObject<HTMLDivElement>) => {
-  const [dragging, setDragging] = useState(false);
-  const [draggingBottom, setDraggingBottom] = useState(false);
+	const [dragging, setDragging] = useState(false);
+	const [draggingBottom, setDraggingBottom] = useState(false);
 
-  const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
+	const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
+		e.preventDefault();
 
-    if (e.target === resizeRef.current) {
-      setDraggingBottom(true);
-    } else {
-      setDragging(true);
-    }
-  };
+		if (e.target === resizeRef.current) {
+			setDraggingBottom(true);
+		} else {
+			setDragging(true);
+		}
+	};
 
-  const handleMouseUp = () => {
-    setDragging(false);
-    setDraggingBottom(false);
-  };
+	const handleMouseUp = () => {
+		setDragging(false);
+		setDraggingBottom(false);
+	};
 
-  return {
-    dragging,
-    draggingBottom,
-    handleMouseDown,
-    handleMouseUp
-  };
+	return {
+		dragging,
+		draggingBottom,
+		handleMouseDown,
+		handleMouseUp,
+	};
 };

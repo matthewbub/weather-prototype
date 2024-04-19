@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { MonthSelectorProps } from './MonthSelector.types';
+import React, { FC } from "react";
+import { MonthSelectorProps } from "./MonthSelector.types";
 
 /**
  * MonthSelector component.
@@ -13,26 +13,26 @@ import { MonthSelectorProps } from './MonthSelector.types';
  * @returns {JSX.Element} The rendered MonthSelector component.
  */
 const MonthSelector: FC<MonthSelectorProps> = ({
-  customField = ({ monthIndex, lang }) => (
-    <div>
-      {new Date(2000, monthIndex - 1).toLocaleDateString(lang, { month: 'long' })}
-    </div>
-  ),
-  lang = 'en',
-  style = {},
-  className = ''
+	customField = ({ monthIndex, lang }) => (
+		<div>
+			{new Date(2000, monthIndex - 1).toLocaleDateString(lang, {
+				month: "long",
+			})}
+		</div>
+	),
+	lang = "en",
+	style = {},
+	className = "",
 }) => {
-  const months = Array.from({ length: 12 }, (_, index) => index + 1);
+	const months = Array.from({ length: 12 }, (_, index) => index + 1);
 
-  return (
-    <div style={style} className={className}>
-      {months.map((month) => (
-        <div key={month}>
-          {customField({ monthIndex: month, lang })}
-        </div>
-      ))}
-    </div>
-  );
+	return (
+		<div style={style} className={className}>
+			{months.map((month) => (
+				<div key={month}>{customField({ monthIndex: month, lang })}</div>
+			))}
+		</div>
+	);
 };
 
 export default MonthSelector;

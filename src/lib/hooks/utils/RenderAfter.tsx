@@ -1,15 +1,18 @@
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from "react";
 
-export function RenderAfter({ delay = 1000, children }: {
-    delay?: number;
-    children: ReactNode;
+export function RenderAfter({
+	delay = 1000,
+	children,
+}: {
+	delay?: number;
+	children: ReactNode;
 }) {
-    const [ready, setReady] = useState(false);
+	const [ready, setReady] = useState(false);
 
-    useEffect(() => {
-        const timer = setTimeout(() => setReady(true), delay)
-        return () => clearTimeout(timer);
-    }, [ready])
+	useEffect(() => {
+		const timer = setTimeout(() => setReady(true), delay);
+		return () => clearTimeout(timer);
+	}, [ready]);
 
-    return ready ? children : null;
+	return ready ? children : null;
 }

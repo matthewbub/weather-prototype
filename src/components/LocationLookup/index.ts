@@ -1,1 +1,1 @@
-export { LocationLookup } from './LocationLookup';
+export { LocationLookup } from "./LocationLookup";

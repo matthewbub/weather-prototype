@@ -35,5 +35,5 @@ export function skirtFailedResponse(msg: string): PostResponseTypes {
 		error: true,
 		message: msg,
 		data: null,
-	}
+	};
 }

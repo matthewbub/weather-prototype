@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { currentUser } from '@clerk/nextjs';
-import { Hero } from '@/components/hero';
-import { TopNavWithAuth } from '@/components/topNav';
+import { currentUser } from "@clerk/nextjs";
+import { Hero } from "@/components/hero";
+import { TopNavWithAuth } from "@/components/topNav";
 import { Cobe } from "@/components/globe";
 
 export default async function Home() {
@@ -21,4 +21,3 @@ export default async function Home() {
 		</div>
 	);
 }
-

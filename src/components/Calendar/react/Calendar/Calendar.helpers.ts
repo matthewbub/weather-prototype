@@ -1,4 +1,4 @@
-import { dateToNumbers } from '../../helpers';
+import { dateToNumbers } from "../../helpers";
 
 /**
  * Returns the next month given a current month.
@@ -6,7 +6,7 @@ import { dateToNumbers } from '../../helpers';
  * @returns The next month as a number.
  */
 export const getNextMonth = (month: number) => {
-  return month === 12 ? 1 : month + 1;
+	return month === 12 ? 1 : month + 1;
 };
 
 /**
@@ -15,7 +15,7 @@ export const getNextMonth = (month: number) => {
  * @returns The previous month as a number.
  */
 export const getPreviousMonth = (month: number) => {
-  return month === 1 ? 12 : month - 1;
+	return month === 1 ? 12 : month - 1;
 };
 
 /**
@@ -25,15 +25,15 @@ export const getPreviousMonth = (month: number) => {
  * @example
  * const days = [null, null, null, null, null, null, null, <Day />, <Day />, <Day />
  * const weeks = createCalendarWeeks(days);
-*/
+ */
 export const createCalendarWeeks = (days: (JSX.Element | null)[]) => {
-  const weeks: (JSX.Element | null)[][] = [];
+	const weeks: (JSX.Element | null)[][] = [];
 
-  for (let i = 0;i < days.length;i += 7) {
-    weeks.push(days.slice(i, i + 7));
-  }
+	for (let i = 0; i < days.length; i += 7) {
+		weeks.push(days.slice(i, i + 7));
+	}
 
-  return weeks;
+	return weeks;
 };
 
 /**
@@ -49,10 +49,9 @@ export const createCalendarWeeks = (days: (JSX.Element | null)[]) => {
  *  }
  */
 export const isToday = (date: Date): boolean => {
-  const today = new Date();
-  return isSameDay(date, today);
+	const today = new Date();
+	return isSameDay(date, today);
 };
-
 
 /**
  * Determines whether two dates represent the same day, regardless of the time of day.
@@ -64,16 +63,16 @@ export const isToday = (date: Date): boolean => {
  *  const customDate = customDates.find(cd => isSameDay(cd.date, currentDate));
  */
 export const isSameDay = (a: Date, b: Date): boolean => {
-  const aN = dateToNumbers(a);
-  const bN = dateToNumbers(b);
+	const aN = dateToNumbers(a);
+	const bN = dateToNumbers(b);
 
-  const isSameYear = aN.year === bN.year;
-  const isSameMonth = aN.month === bN.month;
-  const isSameDate = aN.day === bN.day;
+	const isSameYear = aN.year === bN.year;
+	const isSameMonth = aN.month === bN.month;
+	const isSameDate = aN.day === bN.day;
 
-  if (isSameYear && isSameMonth && isSameDate) {
-    return true;
-  }
+	if (isSameYear && isSameMonth && isSameDate) {
+		return true;
+	}
 
-  return false;
+	return false;
 };

@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
-import Joi from 'joi';
+import Joi from "joi";
 import { supabase } from "@/utils/supabase";
 import { useAppUserOnServer } from "@/utils/useAppUser";
 import { failResponse } from "@/utils/response";
-import { SanitizedUserTypes, handleBatchedWeatherByLocations } from '@/lib/api/location/location.requests';
+import {
+	SanitizedUserTypes,
+	handleBatchedWeatherByLocations,
+} from "@/lib/api/location/location.requests";
 
 interface PostResponseTypes {
 	error: boolean;
@@ -11,14 +14,17 @@ interface PostResponseTypes {
 	data: any | null;
 }
 
-export async function GET() {	
+export async function GET() {
 	// Get all locations the current user watches
 	const sanitizedUser = await useAppUserOnServer();
-	const failedToAuthenticate = sanitizedUser.error || !sanitizedUser.data?.user.id;
+	const failedToAuthenticate =
+		sanitizedUser.error || !sanitizedUser.data?.user.id;
 	if (failedToAuthenticate) {
-		return failResponse(sanitizedUser.message)
+		return failResponse(sanitizedUser.message);
 	}
-	return handleBatchedWeatherByLocations(sanitizedUser as unknown as SanitizedUserTypes);
+	return handleBatchedWeatherByLocations(
+		sanitizedUser as unknown as SanitizedUserTypes,
+	);
 }
 
 // Ensure no nefarious data is being sent
@@ -32,10 +38,11 @@ const schema = Joi.object({
 });
 
 export async function POST(request: Request) {
-	const requestData = await request.json()
+	const requestData = await request.json();
 	const sanitizedUser = await useAppUserOnServer();
 
-	const failedToAuthenticate = sanitizedUser.error || !sanitizedUser.data?.user.id;
+	const failedToAuthenticate =
+		sanitizedUser.error || !sanitizedUser.data?.user.id;
 	if (failedToAuthenticate) {
 		return NextResponse.json<PostResponseTypes>({
 			error: true,
@@ -66,17 +73,19 @@ export async function POST(request: Request) {
 		state: string;
 		county: string;
 	} | null = null;
-	
+
 	const { data: insertData, error: insertError } = await supabase
 		.from("geolocations")
-		.insert([{ 
-			lat, 
-			lon, 
-			formatted, 
-			city, 
-			state, 
-			county 
-		}])
+		.insert([
+			{
+				lat,
+				lon,
+				formatted,
+				city,
+				state,
+				county,
+			},
+		])
 		.select()
 		.single();
 
@@ -131,10 +140,12 @@ export async function POST(request: Request) {
 
 	const { data: insertUserData, error: insertUserError } = await supabase
 		.from("weatherapp_feed_locations_by_user")
-		.insert([{
-			location: locationData.id,
-			user: sanitizedUser.data?.user.id,
-		}])
+		.insert([
+			{
+				location: locationData.id,
+				user: sanitizedUser.data?.user.id,
+			},
+		])
 		.select()
 		.single();
 
@@ -161,13 +172,13 @@ export async function POST(request: Request) {
 	});
 }
 
-export async function HEAD(request: Request) { }
+export async function HEAD(request: Request) {}
 
-export async function PUT(request: Request) { }
+export async function PUT(request: Request) {}
 
-export async function DELETE(request: Request) { }
+export async function DELETE(request: Request) {}
 
-export async function PATCH(request: Request) { }
+export async function PATCH(request: Request) {}
 
 // // If `OPTIONS` is not defined, Next.js will automatically implement `OPTIONS` and  set the appropriate Response `Allow` header depending on the other methods defined in the route handler.
 // export async function OPTIONS(request: Request) {}

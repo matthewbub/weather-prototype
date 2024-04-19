@@ -1,8 +1,8 @@
-import { CustomDate } from '../../Calendar.types';
+import { CustomDate } from "../../Calendar.types";
 
 export interface BaseDayComponentProps {
-  date: Date;
-  isCurrentDay: boolean;
-  inSelectedMonth: boolean;
-  customDate?: CustomDate
+	date: Date;
+	isCurrentDay: boolean;
+	inSelectedMonth: boolean;
+	customDate?: CustomDate;
 }

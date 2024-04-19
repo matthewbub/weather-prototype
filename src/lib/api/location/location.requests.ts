@@ -1,19 +1,31 @@
 import { supabase } from "@/utils/supabase";
-import { skirtFailedResponse, bypassOkResponse, failResponse, okResponse } from "@/utils/response";
+import {
+	skirtFailedResponse,
+	bypassOkResponse,
+	failResponse,
+	okResponse,
+} from "@/utils/response";
 import { fetchOpenWeatherApiWithCoordinates } from "@/utils/openWeather";
 
-export const querySupabaseForUserSelectedLocations = async (id: string, lastRecord?: string) => {
-	const { data: userSelected, error: userSelectedGeoLocationsError } = await supabase
-		.from('weatherapp_feed_locations_by_user')
-		.select(`
+export const querySupabaseForUserSelectedLocations = async (
+	id: string,
+	lastRecord?: string,
+) => {
+	const { data: userSelected, error: userSelectedGeoLocationsError } =
+		await supabase
+			.from("weatherapp_feed_locations_by_user")
+			.select(
+				`
 			id,
 			geolocations:location!inner(*)		
-		`, { count: 'exact' })
-		.eq('user', id)
-		.order('created_at', { ascending: false })
+		`,
+				{ count: "exact" },
+			)
+			.eq("user", id)
+			.order("created_at", { ascending: false });
 
 	if (userSelectedGeoLocationsError) {
-		return skirtFailedResponse(userSelectedGeoLocationsError.message)
+		return skirtFailedResponse(userSelectedGeoLocationsError.message);
 	}
 
 	if (!userSelected || userSelected.length === 0) {
@@ -21,100 +33,124 @@ export const querySupabaseForUserSelectedLocations = async (id: string, lastReco
 	}
 
 	const { data: favorites, error: favoritesError } = await supabase
-		.from('weatherapp_feed_locations_by_user_favorites')
+		.from("weatherapp_feed_locations_by_user_favorites")
 		.select(`
 				*,
 				geolocations:location!inner(*)
 			`)
-		.eq('user', id);
+		.eq("user", id);
 
 	if (favoritesError) {
-		return skirtFailedResponse(favoritesError.message)
+		return skirtFailedResponse(favoritesError.message);
 	}
 
-	const geolocationIds = favorites.map(favorite => favorite.geolocations.location);
+	const geolocationIds = favorites.map(
+		(favorite) => favorite.geolocations.location,
+	);
 	const { data: cityInfos, error: cityInfosError } = await supabase
-		.from('geolocations')
-		.select('*')
-		.in('id', geolocationIds);
+		.from("geolocations")
+		.select("*")
+		.in("id", geolocationIds);
 
 	if (cityInfosError) {
 		return skirtFailedResponse(cityInfosError.message);
 	}
 
 	// Merge the city information back into the favorites based on the geolocation ID
-	const mergedFavorites = favorites.map(favorite => ({
+	const mergedFavorites = favorites.map((favorite) => ({
 		...favorite,
-		city_info: cityInfos.find(info => info.id === favorite.geolocations.location)
+		city_info: cityInfos.find(
+			(info) => info.id === favorite.geolocations.location,
+		),
 	}));
 
-
-	return bypassOkResponse({ locations: userSelected, favorites: mergedFavorites });
-}
+	return bypassOkResponse({
+		locations: userSelected,
+		favorites: mergedFavorites,
+	});
+};
 
 interface LocationTypes {
 	geolocations: {
 		lat: number;
 		lon: number;
 		formatted: string;
-	}
+	};
 }
 
-export const queryOpenWeatherApiForUsersLocations = async (locations: LocationTypes[]) => {
+export const queryOpenWeatherApiForUsersLocations = async (
+	locations: LocationTypes[],
+) => {
 	const weatherDataForAllLocations: any = [];
 
 	for (const location of locations) {
 		const { lat, lon, formatted } = location.geolocations;
 		try {
-			const weatherData = await fetchOpenWeatherApiWithCoordinates(lat.toString(), lon.toString());
+			const weatherData = await fetchOpenWeatherApiWithCoordinates(
+				lat.toString(),
+				lon.toString(),
+			);
 			weatherDataForAllLocations.push({
 				formatted: formatted,
 				...weatherData,
-				...location
+				...location,
 			});
 		} catch (error) {
-			return skirtFailedResponse(`Failed to fetch weather for location (${lat}, ${lon}):`);
+			return skirtFailedResponse(
+				`Failed to fetch weather for location (${lat}, ${lon}):`,
+			);
 		}
 	}
 
 	return bypassOkResponse(weatherDataForAllLocations);
-}
+};
 
-
-export const queryOpenWeatherApiForSingleLocation = async (lat: number, lon: number, formatted: string) => {
+export const queryOpenWeatherApiForSingleLocation = async (
+	lat: number,
+	lon: number,
+	formatted: string,
+) => {
 	try {
-		const weatherData = await fetchOpenWeatherApiWithCoordinates(lat.toString(), lon.toString());
+		const weatherData = await fetchOpenWeatherApiWithCoordinates(
+			lat.toString(),
+			lon.toString(),
+		);
 		return bypassOkResponse({
 			formatted: formatted,
-			...weatherData
-		})
+			...weatherData,
+		});
 	} catch (error) {
-		return skirtFailedResponse(`Failed to fetch weather for location (${lat}, ${lon}):`);
+		return skirtFailedResponse(
+			`Failed to fetch weather for location (${lat}, ${lon}):`,
+		);
 	}
-}
+};
 
 export interface SanitizedUserTypes {
 	data?: {
 		user: {
 			id: string;
-		}
-	}
+		};
+	};
 }
 
-export const handleBatchedWeatherByLocations = async (sanitizedUser: SanitizedUserTypes) => {
-	const getUserSelectedGeoLocations = await querySupabaseForUserSelectedLocations(
-		sanitizedUser.data?.user.id as string
-	);
+export const handleBatchedWeatherByLocations = async (
+	sanitizedUser: SanitizedUserTypes,
+) => {
+	const getUserSelectedGeoLocations =
+		await querySupabaseForUserSelectedLocations(
+			sanitizedUser.data?.user.id as string,
+		);
 
 	if (getUserSelectedGeoLocations.error) {
-		return failResponse(getUserSelectedGeoLocations.message)
+		return failResponse(getUserSelectedGeoLocations.message);
 	}
 
 	const userSelectedGeoLocations = getUserSelectedGeoLocations?.data;
 
 	const weatherDataForAllLocations = await queryOpenWeatherApiForUsersLocations(
-		userSelectedGeoLocations?.locations
-	)
+		userSelectedGeoLocations?.locations,
+	);
 	if (weatherDataForAllLocations?.error) {
 		return failResponse(weatherDataForAllLocations.message);
 	}
@@ -124,4 +160,4 @@ export const handleBatchedWeatherByLocations = async (sanitizedUser: SanitizedUs
 		weather: weatherDataForAllLocations?.data,
 		favorites: userSelectedGeoLocations?.favorites,
 	});
-}
+};

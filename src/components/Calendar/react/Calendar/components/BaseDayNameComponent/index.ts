@@ -1,3 +1,3 @@
-export { default as BaseDayNameComponent } from './BaseDayNameComponent';
+export { default as BaseDayNameComponent } from "./BaseDayNameComponent";
 
-export { BaseDayNameComponentProps } from './BaseDayNameComponent.types';
+export { BaseDayNameComponentProps } from "./BaseDayNameComponent.types";

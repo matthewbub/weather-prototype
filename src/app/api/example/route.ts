@@ -1,24 +1,24 @@
 import { NextResponse } from "next/server";
 
 type Params = {
-  team: string
-}
- 
+	team: string;
+};
+
 export async function GET(request: Request, context: { params: Params }) {
-	const team = context.params.team // '1'
+	const team = context.params.team; // '1'
 
 	return NextResponse.json({
 		error: false,
-		data: team
+		data: team,
 	});
 }
 
 export async function POST(request: Request) {
-	const requestData = await request.json()
-	
+	const requestData = await request.json();
+
 	return NextResponse.json({
 		error: false,
-		data: requestData
+		data: requestData,
 	});
 }
 
