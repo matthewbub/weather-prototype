@@ -2,11 +2,19 @@ import { create } from "zustand";
 
 interface GlobalStoreTypes {
 	locations: any;
-	setLocations: any;
+	setLocations: (locations: any) => void;
 	weather: any;
-	setWeather: any;
+	setWeather: (weather: any) => void;
 	favorites: any;
 	setFavorites: (favorites: any) => void;
+	topNews: {
+		status: string;
+		totalResults: number;
+		data: {
+			articles: any[];
+		};
+	};
+	setTopNews: (topNews: any) => void;
 }
 
 export const globalStore = create<GlobalStoreTypes>((set) => ({
@@ -16,4 +24,12 @@ export const globalStore = create<GlobalStoreTypes>((set) => ({
 	setWeather: (weather: any) => set({ weather }),
 	favorites: [],
 	setFavorites: (favorites: any) => set({ favorites }),
+	topNews: {
+		status: "",
+		totalResults: 0,
+		data: {
+			articles: [],
+		},
+	},
+	setTopNews: (topNews: any) => set({ topNews }),
 }));
